@@ -15,7 +15,7 @@ export default function decorate(block) {
 
   const headingRow = rows[1];
   const heading = headingRow?.children[0]?.innerHTML || '';
-  const desc = headingRow?.children[1]?.textContent?.trim() || '';
+  const desc = headingRow?.children[1]?.innerHTML || '';
 
   const tabRow = rows[2];
   const tab1Name = tabRow?.children[0]?.textContent?.trim() || 'ASSET CLASS RANGES';
@@ -51,7 +51,8 @@ export default function decorate(block) {
 
   const descEl = document.createElement('p');
   descEl.className = 'asset-allocation-desc';
-  descEl.textContent = desc;
+  descEl.innerHTML = desc;
+  if (headingRow?.children[1]) moveInstrumentation(headingRow.children[1], descEl);
 
   leftPanel.appendChild(labelEl);
   leftPanel.appendChild(headingEl);
@@ -87,7 +88,8 @@ export default function decorate(block) {
     return {
       name: cols[0]?.textContent?.trim() || '',
       range: cols[1]?.textContent?.trim() || '',
-      description: cols[2]?.textContent?.trim() || '',
+      description: cols[2]?.innerHTML || '',
+      descriptionElement: cols[2],
       active: cols[3]?.textContent?.trim()?.toLowerCase() === 'true',
     };
   });
@@ -132,7 +134,10 @@ export default function decorate(block) {
 
     const kpiDesc = document.createElement('p');
     kpiDesc.className = 'asset-allocation-kpi-desc';
-    kpiDesc.textContent = activeAsset.description;
+    kpiDesc.innerHTML = activeAsset.description;
+    if (activeAsset.descriptionElement) {
+      moveInstrumentation(activeAsset.descriptionElement, kpiDesc);
+    }
 
     kpiCard.appendChild(kpiTitle);
     kpiCard.appendChild(kpiRange);
