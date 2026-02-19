@@ -19,9 +19,21 @@
     ]
   },
   {
+    "id": "asset-allocation",
+    "components": [
+      "asset-class"
+    ]
+  },
+  {
     "id": "cards",
     "components": [
       "card"
+    ]
+  },
+  {
+    "id": "careers-banner",
+    "components": [
+      "career-tab"
     ]
   },
   {
@@ -37,6 +49,24 @@
       "image",
       "button",
       "title"
+    ]
+  },
+  {
+    "id": "news-insights",
+    "components": [
+      "news-article"
+    ]
+  },
+  {
+    "id": "sector-cards",
+    "components": [
+      "sector-card"
+    ]
+  },
+  {
+    "id": "values",
+    "components": [
+      "value-card"
     ]
   }
 ]

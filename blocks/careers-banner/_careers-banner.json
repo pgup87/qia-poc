@@ -1,0 +1,84 @@
+{
+  "definitions": [
+    {
+      "title": "Careers Banner",
+      "id": "careers-banner",
+      "plugins": {
+        "xwalk": {
+          "page": {
+            "resourceType": "core/franklin/components/block/v1/block",
+            "template": {
+              "name": "Careers Banner",
+              "filter": "careers-banner"
+            }
+          }
+        }
+      }
+    },
+    {
+      "title": "Career Tab",
+      "id": "career-tab",
+      "plugins": {
+        "xwalk": {
+          "page": {
+            "resourceType": "core/franklin/components/block/v1/block/item",
+            "template": {
+              "name": "Career Tab",
+              "model": "career-tab"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "models": [
+    {
+      "id": "career-tab",
+      "fields": [
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "tabName",
+          "label": "Tab Name",
+          "value": ""
+        },
+        {
+          "component": "reference",
+          "valueType": "string",
+          "name": "image",
+          "label": "Image",
+          "multi": false
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "title",
+          "label": "Content Title",
+          "value": ""
+        },
+        {
+          "component": "reference",
+          "valueType": "string",
+          "name": "logo",
+          "label": "Logo (optional)",
+          "multi": false
+        },
+        {
+          "component": "richtext",
+          "name": "description",
+          "value": "",
+          "label": "Description",
+          "valueType": "string"
+        }
+      ]
+    }
+  ],
+  "filters": [
+    {
+      "id": "careers-banner",
+      "components": [
+        "career-tab"
+      ]
+    }
+  ]
+}

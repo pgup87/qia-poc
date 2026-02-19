@@ -1,0 +1,312 @@
+/* Asset Allocation Block */
+.asset-allocation.block {
+  padding: 0;
+}
+
+.asset-allocation-container {
+  display: flex;
+  gap: 22px;
+  align-items: flex-start;
+  min-height: 612px;
+}
+
+/* Left Panel */
+.asset-allocation-left {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  width: 411px;
+  flex-shrink: 0;
+}
+
+.asset-allocation-label {
+  font-family: var(--body-font-family);
+  font-weight: var(--body-font-weight-normal);
+  font-size: 20px;
+  line-height: 1.25;
+  color: var(--color-base-100);
+  margin: 0;
+}
+
+.asset-allocation-heading {
+  font-family: var(--heading-font-family);
+  font-weight: var(--body-font-weight-light);
+  font-size: var(--heading-font-size-xl);
+  line-height: 1.25;
+  color: var(--color-base-100);
+}
+
+.asset-allocation-heading p {
+  margin: 0;
+}
+
+.asset-allocation-desc {
+  font-family: var(--body-font-family);
+  font-weight: var(--body-font-weight-light);
+  font-size: 24px;
+  line-height: 1.25;
+  color: var(--color-base-100);
+  margin: 0;
+}
+
+/* Tabs */
+.asset-allocation-tabs {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  width: 394px;
+}
+
+.asset-allocation-tab {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 30px 24px 30px 0;
+  height: 73px;
+  background: none;
+  border: none;
+  border-bottom: 1px solid #ccc;
+  cursor: pointer;
+  font-family: var(--body-font-family);
+  font-size: 18px;
+  line-height: 1.25;
+  color: var(--color-base-100);
+  text-align: left;
+}
+
+.asset-allocation-tab.active {
+  font-weight: var(--body-font-weight-normal);
+  border-bottom: 3px solid var(--color-primary-100);
+}
+
+.asset-allocation-tab:not(.active) {
+  font-weight: var(--body-font-weight-light);
+}
+
+.tab-arrow {
+  font-size: 20px;
+}
+
+/* Center Panel - Wheel */
+.asset-allocation-center {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 43px;
+}
+
+.asset-allocation-wheel {
+  position: relative;
+  width: 500px;
+  height: 500px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.asset-allocation-wheel-inner {
+  width: 340px;
+  height: 340px;
+  border-radius: 50%;
+  border: 2px solid var(--color-primary-20);
+  position: relative;
+  background: radial-gradient(circle,
+    var(--color-primary-100) 0%,
+    var(--color-primary-100) 25%,
+    rgb(118 19 70 / 20%) 25%,
+    rgb(118 19 70 / 10%) 55%,
+    transparent 55%
+  );
+}
+
+.asset-allocation-wheel-inner::after {
+  content: '';
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 1px solid var(--color-primary-20);
+}
+
+/* Pill labels around wheel */
+.asset-allocation-pill {
+  position: absolute;
+  padding: 10px 18px;
+  border: 1px solid var(--color-primary-20);
+  border-radius: 36px;
+  font-family: var(--body-font-family);
+  font-weight: var(--body-font-weight-light);
+  font-size: 18px;
+  line-height: 1.25;
+  color: var(--color-base-100);
+  background: white;
+  white-space: nowrap;
+}
+
+.asset-allocation-pill.active {
+  background: var(--color-primary-100);
+  color: var(--color-always-white);
+}
+
+/* Position pills around the circle */
+.asset-allocation-pill:nth-child(2) {
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.asset-allocation-pill:nth-child(3) {
+  top: 20%;
+  right: -80px;
+}
+
+.asset-allocation-pill:nth-child(4) {
+  top: 55%;
+  right: -90px;
+}
+
+.asset-allocation-pill:nth-child(5) {
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.asset-allocation-pill:nth-child(6) {
+  top: 55%;
+  left: -100px;
+}
+
+.asset-allocation-pill:nth-child(7) {
+  top: 20%;
+  left: -60px;
+}
+
+/* Right Panel - KPI Card */
+.asset-allocation-right {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  align-items: flex-start;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.asset-allocation-kpi {
+  background-color: var(--color-primary-100);
+  border-radius: 20px;
+  padding: 48px 36px;
+  width: 336px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 314px;
+  box-shadow: 0 4px 13px rgb(0 0 0 / 16%);
+}
+
+.asset-allocation-kpi-title {
+  font-family: var(--body-font-family);
+  font-weight: var(--body-font-weight-light);
+  font-size: 28px;
+  line-height: 1.3;
+  color: var(--color-always-white);
+  margin: 0 0 8px;
+}
+
+.asset-allocation-kpi-range {
+  font-family: var(--body-font-family);
+  font-weight: var(--body-font-weight-normal);
+  font-size: 36px;
+  line-height: 1.25;
+  color: var(--color-always-white);
+  margin: 0 0 24px;
+}
+
+.asset-allocation-kpi-bar {
+  width: 100%;
+  height: 16px;
+  background-color: var(--color-primary-80);
+  border-radius: 30px;
+  margin-bottom: 24px;
+}
+
+.asset-allocation-kpi-bar-fill {
+  height: 100%;
+  width: 46%;
+  border-radius: 30px;
+  background: linear-gradient(90deg, var(--color-secondary-100) 0%, var(--color-secondary-80) 100%);
+}
+
+.asset-allocation-kpi-desc {
+  font-family: var(--body-font-family);
+  font-weight: var(--body-font-weight-light);
+  font-size: 18px;
+  line-height: 1.4;
+  color: var(--color-always-white);
+  margin: 0;
+}
+
+.asset-allocation-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 20px;
+  padding: 14px 24px;
+  background-color: var(--color-primary-100);
+  color: var(--color-always-white);
+  border-radius: 40px;
+  font-size: 18px;
+  font-weight: var(--body-font-weight-light);
+  text-decoration: none;
+}
+
+.asset-allocation-cta:hover {
+  background-color: var(--color-primary-80);
+  color: var(--color-always-white);
+  text-decoration: none;
+}
+
+/* Mobile */
+@media (width < 900px) {
+  .asset-allocation-container {
+    flex-direction: column;
+    gap: 48px;
+  }
+
+  .asset-allocation-left {
+    width: 100%;
+  }
+
+  .asset-allocation-heading {
+    font-size: var(--heading-font-size-l);
+  }
+
+  .asset-allocation-tabs {
+    width: 100%;
+  }
+
+  .asset-allocation-center {
+    padding: 0;
+  }
+
+  .asset-allocation-wheel {
+    width: 320px;
+    height: 320px;
+  }
+
+  .asset-allocation-wheel-inner {
+    width: 220px;
+    height: 220px;
+  }
+
+  .asset-allocation-pill {
+    font-size: 14px;
+    padding: 6px 12px;
+  }
+
+  .asset-allocation-kpi {
+    width: 100%;
+  }
+}

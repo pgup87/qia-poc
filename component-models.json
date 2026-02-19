@@ -142,6 +142,78 @@
     ]
   },
   {
+    "id": "about-us",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "label",
+        "label": "Section Label",
+        "value": "ABOUT US"
+      },
+      {
+        "component": "richtext",
+        "name": "heading",
+        "value": "",
+        "label": "Heading",
+        "valueType": "string"
+      },
+      {
+        "component": "richtext",
+        "name": "description",
+        "value": "",
+        "label": "Description",
+        "valueType": "string"
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "ctaLink",
+        "label": "CTA Link"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "ctaText",
+        "label": "CTA Text",
+        "value": "Discover more"
+      }
+    ]
+  },
+  {
+    "id": "asset-class",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "name",
+        "label": "Asset Class Name",
+        "value": ""
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "range",
+        "label": "Percentage Range",
+        "value": ""
+      },
+      {
+        "component": "richtext",
+        "name": "description",
+        "value": "",
+        "label": "Description",
+        "valueType": "string"
+      },
+      {
+        "component": "boolean",
+        "valueType": "boolean",
+        "name": "active",
+        "label": "Active/Selected",
+        "value": false
+      }
+    ]
+  },
+  {
     "id": "card",
     "fields": [
       {
@@ -161,6 +233,86 @@
     ]
   },
   {
+    "id": "career-tab",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "tabName",
+        "label": "Tab Name",
+        "value": ""
+      },
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "image",
+        "label": "Image",
+        "multi": false
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "label": "Content Title",
+        "value": ""
+      },
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "logo",
+        "label": "Logo (optional)",
+        "multi": false
+      },
+      {
+        "component": "richtext",
+        "name": "description",
+        "value": "",
+        "label": "Description",
+        "valueType": "string"
+      }
+    ]
+  },
+  {
+    "id": "ceo-message",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "label",
+        "label": "Section Label",
+        "value": "CEO MESSAGE"
+      },
+      {
+        "component": "richtext",
+        "name": "quote",
+        "value": "",
+        "label": "Quote Text",
+        "valueType": "string"
+      },
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "photo",
+        "label": "CEO Photo",
+        "multi": false
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "name",
+        "label": "CEO Name",
+        "value": ""
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "label": "CEO Title",
+        "value": ""
+      }
+    ]
+  },
+  {
     "id": "columns",
     "fields": [
       {
@@ -176,6 +328,53 @@
         "name": "rows",
         "value": "",
         "label": "Rows"
+      }
+    ]
+  },
+  {
+    "id": "esg",
+    "fields": [
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "backgroundImage",
+        "label": "Background Image",
+        "multi": false
+      },
+      {
+        "component": "richtext",
+        "name": "heading",
+        "value": "",
+        "label": "Heading",
+        "valueType": "string"
+      },
+      {
+        "component": "richtext",
+        "name": "description",
+        "value": "",
+        "label": "Description",
+        "valueType": "string"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "statValue",
+        "label": "Statistic Value",
+        "value": ""
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "statLabel",
+        "label": "Statistic Label",
+        "value": ""
+      },
+      {
+        "component": "richtext",
+        "name": "statDescription",
+        "value": "",
+        "label": "Statistic Description",
+        "valueType": "string"
       }
     ]
   },
@@ -211,6 +410,159 @@
         "name": "text",
         "value": "",
         "label": "Text",
+        "valueType": "string"
+      }
+    ]
+  },
+  {
+    "id": "homepage-hero",
+    "fields": [
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "backgroundImage",
+        "label": "Background Image",
+        "multi": false
+      },
+      {
+        "component": "richtext",
+        "name": "heading",
+        "value": "",
+        "label": "Heading",
+        "valueType": "string"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "subtitle",
+        "label": "Subtitle",
+        "value": ""
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "card1Title",
+        "label": "Card 1 Title",
+        "value": ""
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "card1Link",
+        "label": "Card 1 Link",
+        "value": ""
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "card2Stat",
+        "label": "Card 2 Statistic",
+        "value": ""
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "card2Description",
+        "label": "Card 2 Description",
+        "value": ""
+      }
+    ]
+  },
+  {
+    "id": "news-article",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "category",
+        "label": "Category",
+        "value": ""
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "label": "Title",
+        "value": ""
+      },
+      {
+        "component": "richtext",
+        "name": "excerpt",
+        "value": "",
+        "label": "Excerpt",
+        "valueType": "string"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "tag",
+        "label": "Tag",
+        "value": ""
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "readTime",
+        "label": "Read Time",
+        "value": ""
+      },
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "image",
+        "label": "Image",
+        "multi": false
+      }
+    ]
+  },
+  {
+    "id": "sector-card",
+    "fields": [
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "image",
+        "label": "Image",
+        "multi": false
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "name",
+        "label": "Sector Name",
+        "value": ""
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "size",
+        "label": "Card Size (large or empty)",
+        "value": ""
+      }
+    ]
+  },
+  {
+    "id": "value-card",
+    "fields": [
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "icon",
+        "label": "Icon",
+        "multi": false
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "label": "Title",
+        "value": ""
+      },
+      {
+        "component": "richtext",
+        "name": "description",
+        "value": "",
+        "label": "Description",
         "valueType": "string"
       }
     ]
