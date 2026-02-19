@@ -82,6 +82,10 @@
           "bold",
           "italic"
         ],
+        "indentation": [
+          "indent",
+          "outdent"
+        ],
         "blocks": [
           "paragraph",
           "h1",
@@ -93,13 +97,20 @@
         ],
         "insert": [
           "link",
-          "unlink"
+          "unlink",
+          "image"
+        ],
+        "editor": [
+          "removeformat",
+          "paste_text"
         ],
         "sections": [
           "format",
+          "indentation",
           "blocks",
           "list",
-          "insert"
+          "insert",
+          "editor"
         ]
       },
       "actions": {
@@ -110,26 +121,56 @@
         },
         "italic": {
           "tag": "em",
-          "shortcut": "Mod-I"
+          "shortcut": "Mod-I",
+          "label": "Italic"
+        },
+        "indentation": {
+          "scope": "lists"
+        },
+        "indent": {
+          "shortcut": "Tab",
+          "label": "Increase Indent"
+        },
+        "outdent": {
+          "shortcut": "Shift-Tab",
+          "label": "Decrease Indent"
         },
         "bullet_list": {
           "wrapInParagraphs": true,
+          "shortcut": "Mod-Shift-8",
           "label": "Bullet List"
         },
         "ordered_list": {
-          "wrapInParagraphs": false
+          "wrapInParagraphs": false,
+          "shortcut": "Mod-Shift-9",
+          "label": "Numbered List"
         },
         "link": {
           "hideTarget": false,
+          "disableForImages": true,
           "shortcut": "Mod-K",
           "label": "Add Link"
         },
         "unlink": {
+          "shortcut": "Mod-Shift-K",
           "label": "Remove Link"
+        },
+        "image": {
+          "wrapInPicture": true,
+          "shortcut": "Mod-Shift-I",
+          "label": "Insert Image"
+        },
+        "paste_text": {
+          "shortcut": "Mod-Shift-v",
+          "label": "Paste as Text"
         },
         "h1": {
           "shortcut": "Mod-Alt-1",
           "label": "Main Heading"
+        },
+        "paragraph": {
+          "shortcut": "Mod-Alt-0",
+          "label": "Paragraph"
         }
       }
     }
