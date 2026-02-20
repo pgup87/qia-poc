@@ -181,6 +181,59 @@
     ]
   },
   {
+    "id": "asset-allocation",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "label",
+        "label": "Section Label",
+        "value": "ASSET ALLOCATION"
+      },
+      {
+        "component": "richtext",
+        "name": "heading",
+        "value": "",
+        "label": "Heading",
+        "valueType": "string"
+      },
+      {
+        "component": "richtext",
+        "name": "description",
+        "value": "",
+        "label": "Description",
+        "valueType": "string"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "tab1",
+        "label": "Tab 1 Name",
+        "value": "ASSET CLASS RANGES"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "tab2",
+        "label": "Tab 2 Name",
+        "value": "REGIONAL OPERATING RANGES"
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "ctaLink",
+        "label": "CTA Link"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "ctaText",
+        "label": "CTA Text",
+        "value": "Learn more"
+      }
+    ]
+  },
+  {
     "id": "asset-class",
     "fields": [
       {
@@ -229,6 +282,45 @@
         "value": "",
         "label": "Text",
         "valueType": "string"
+      }
+    ]
+  },
+  {
+    "id": "careers-banner",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "label",
+        "label": "Section Label",
+        "value": "CAREERS"
+      },
+      {
+        "component": "richtext",
+        "name": "heading",
+        "value": "",
+        "label": "Heading",
+        "valueType": "string"
+      },
+      {
+        "component": "richtext",
+        "name": "description",
+        "value": "",
+        "label": "Description",
+        "valueType": "string"
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "ctaLink",
+        "label": "CTA Link"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "ctaText",
+        "label": "CTA Text",
+        "value": "Learn more"
       }
     ]
   },
@@ -469,6 +561,38 @@
     ]
   },
   {
+    "id": "news-insights",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "label",
+        "label": "Section Label",
+        "value": "FEATURED HIGHLIGHTS"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "heading",
+        "label": "Heading",
+        "value": "News & Insights"
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "ctaLink",
+        "label": "View All Link"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "ctaText",
+        "label": "View All Text",
+        "value": "View all"
+      }
+    ]
+  },
+  {
     "id": "news-article",
     "fields": [
       {
@@ -516,6 +640,45 @@
     ]
   },
   {
+    "id": "sector-cards",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "label",
+        "label": "Section Label",
+        "value": "OUR INVESTMENTS"
+      },
+      {
+        "component": "richtext",
+        "name": "heading",
+        "value": "",
+        "label": "Heading",
+        "valueType": "string"
+      },
+      {
+        "component": "richtext",
+        "name": "description",
+        "value": "",
+        "label": "Description",
+        "valueType": "string"
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "ctaLink",
+        "label": "CTA Link"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "ctaText",
+        "label": "CTA Text",
+        "value": "About our approach"
+      }
+    ]
+  },
+  {
     "id": "sector-card",
     "fields": [
       {
@@ -538,6 +701,18 @@
         "name": "size",
         "label": "Card Size (large or empty)",
         "value": ""
+      }
+    ]
+  },
+  {
+    "id": "values",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "label",
+        "label": "Section Label",
+        "value": "Our values"
       }
     ]
   },
