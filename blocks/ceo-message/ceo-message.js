@@ -6,6 +6,7 @@ export default function decorate(block) {
   // Row 0: "CEO MESSAGE" label | (unused)
   // Row 1: Quote text | CEO Photo
   // Row 2: CEO Name | CEO Title
+  // Row 3: CTA link text | CTA URL
 
   const rows = [...block.children];
 
@@ -20,6 +21,9 @@ export default function decorate(block) {
   const nameRow = rows[2];
   const ceoName = nameRow?.children[0]?.textContent?.trim() || '';
   const ceoTitle = nameRow?.children[1]?.textContent?.trim() || '';
+
+  const ctaRow = rows[3];
+  const ctaLink = ctaRow?.querySelector('a');
 
   // Build the block
   const container = document.createElement('div');
@@ -60,11 +64,14 @@ export default function decorate(block) {
 
   ctaCol.appendChild(labelEl);
 
-  const ctaLink = document.createElement('a');
-  ctaLink.href = '#';
-  ctaLink.className = 'button ceo-message-cta';
-  ctaLink.innerHTML = 'Learn more <span class="cta-arrow">→</span>';
-  ctaCol.appendChild(ctaLink);
+  if (ctaLink) {
+    const cta = document.createElement('a');
+    cta.href = ctaLink.href;
+    cta.className = 'button ceo-message-cta';
+    cta.innerHTML = `${ctaLink.textContent} <span class="cta-arrow">→</span>`;
+    moveInstrumentation(ctaLink, cta);
+    ctaCol.appendChild(cta);
+  }
 
   // Right side with quote and photo
   const rightCol = document.createElement('div');

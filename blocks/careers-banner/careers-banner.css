@@ -68,6 +68,7 @@
   display: inline-flex;
   align-items: center;
   gap: 20px;
+  height: 60px;
   padding: 14px 24px;
   background-color: var(--color-primary-100);
   color: var(--color-always-white);
@@ -77,6 +78,7 @@
   text-decoration: none;
   width: fit-content;
   margin: 0;
+  box-sizing: border-box;
 }
 
 .careers-banner-cta:hover {
@@ -87,6 +89,14 @@
 
 .cta-arrow {
   font-size: 20px;
+}
+
+/* Tabs Wrapper */
+.careers-banner-tabs-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 72px;
+  width: 100%;
 }
 
 /* Tabs Navigation */
@@ -145,7 +155,22 @@
 .careers-banner-panel-text {
   display: flex;
   flex-direction: column;
+  gap: 40px;
+  align-items: flex-start;
+  width: 843px;
+}
+
+.careers-banner-panel-content {
+  display: flex;
+  flex-direction: column;
   gap: 24px;
+  align-items: flex-start;
+}
+
+.careers-banner-panel-title-logo {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
   align-items: flex-start;
 }
 
@@ -182,6 +207,7 @@
   display: inline-flex;
   align-items: center;
   gap: 20px;
+  height: 60px;
   padding: 14px 24px;
   background-color: var(--color-primary-100);
   color: var(--color-always-white);
@@ -189,7 +215,7 @@
   font-size: 18px;
   font-weight: var(--body-font-weight-light);
   text-decoration: none;
-  margin-top: 16px;
+  box-sizing: border-box;
 }
 
 .careers-banner-panel-cta:hover {
@@ -215,6 +241,10 @@
     font-size: var(--heading-font-size-xl);
   }
 
+  .careers-banner-tabs-wrapper {
+    gap: 40px;
+  }
+
   .careers-banner-tabs {
     flex-wrap: wrap;
   }
@@ -236,6 +266,10 @@
 
   .careers-banner-panel-img img {
     height: 240px;
+  }
+
+  .careers-banner-panel-text {
+    width: 100%;
   }
 
   .careers-banner-panel-title {

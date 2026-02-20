@@ -43,6 +43,22 @@ export default function decorate(block) {
   const headerRight = document.createElement('div');
   headerRight.className = 'news-insights-header-right';
 
+  // Filter dropdown
+  const filter = document.createElement('div');
+  filter.className = 'news-insights-filter';
+
+  const filterLabel = document.createElement('p');
+  filterLabel.className = 'news-insights-filter-label';
+  filterLabel.textContent = 'Filter By:';
+  filter.appendChild(filterLabel);
+
+  const filterSelect = document.createElement('button');
+  filterSelect.className = 'news-insights-filter-select';
+  filterSelect.innerHTML = 'News <span class="filter-chevron">▼</span>';
+  filter.appendChild(filterSelect);
+
+  headerRight.appendChild(filter);
+
   const ctaLink = ctaRow?.querySelector('a');
   if (ctaLink) {
     const cta = document.createElement('a');
@@ -72,12 +88,16 @@ export default function decorate(block) {
     const featuredText = document.createElement('div');
     featuredText.className = 'news-insights-featured-text';
 
+    // Content group (gap-24px)
+    const featuredContent = document.createElement('div');
+    featuredContent.className = 'news-insights-featured-content';
+
     // Category
     if (cols[0]) {
       const cat = document.createElement('p');
       cat.className = 'news-insights-category';
       cat.textContent = cols[0].textContent.trim();
-      featuredText.appendChild(cat);
+      featuredContent.appendChild(cat);
     }
 
     // Title
@@ -85,7 +105,7 @@ export default function decorate(block) {
       const title = document.createElement('h3');
       title.className = 'news-insights-featured-title';
       title.textContent = cols[1].textContent.trim();
-      featuredText.appendChild(title);
+      featuredContent.appendChild(title);
     }
 
     // Excerpt
@@ -93,7 +113,7 @@ export default function decorate(block) {
       const excerpt = document.createElement('p');
       excerpt.className = 'news-insights-excerpt';
       excerpt.textContent = cols[2].textContent.trim();
-      featuredText.appendChild(excerpt);
+      featuredContent.appendChild(excerpt);
     }
 
     // Tags + read time
@@ -111,7 +131,9 @@ export default function decorate(block) {
       time.textContent = cols[4].textContent.trim();
       meta.appendChild(time);
     }
-    featuredText.appendChild(meta);
+    featuredContent.appendChild(meta);
+
+    featuredText.appendChild(featuredContent);
 
     // Featured CTA
     const fctaLink = cols[6]?.querySelector('a');

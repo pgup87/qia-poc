@@ -132,8 +132,12 @@ export default function decorate(block) {
     grid.appendChild(bottomRow);
   }
 
-  container.appendChild(header);
-  container.appendChild(subheader);
+  const headerWrapper = document.createElement('div');
+  headerWrapper.className = 'sector-cards-header-wrapper';
+  headerWrapper.appendChild(header);
+  headerWrapper.appendChild(subheader);
+
+  container.appendChild(headerWrapper);
   container.appendChild(grid);
 
   block.textContent = '';

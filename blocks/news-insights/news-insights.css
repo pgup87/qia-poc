@@ -46,10 +46,48 @@
   align-items: flex-end;
 }
 
+/* Filter Dropdown */
+.news-insights-filter {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 268px;
+  border-bottom: 1px solid var(--color-base-100);
+}
+
+.news-insights-filter-label {
+  font-family: var(--body-font-family);
+  font-weight: var(--body-font-weight-light);
+  font-size: 16px;
+  line-height: 1.25;
+  color: var(--color-base-80);
+  margin: 0;
+}
+
+.news-insights-filter-select {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-family: var(--body-font-family);
+  font-weight: var(--body-font-weight-normal);
+  font-size: 18px;
+  line-height: 1.25;
+  color: var(--color-base-100);
+}
+
+.news-insights-filter-select .filter-chevron {
+  font-size: 12px;
+}
+
 .news-insights-cta {
   display: inline-flex;
   align-items: center;
   gap: 20px;
+  height: 60px;
   padding: 14px 24px;
   background-color: var(--color-primary-100);
   color: var(--color-always-white);
@@ -57,6 +95,7 @@
   font-size: 18px;
   font-weight: var(--body-font-weight-light);
   text-decoration: none;
+  box-sizing: border-box;
 }
 
 .news-insights-cta:hover {
@@ -86,9 +125,15 @@
 .news-insights-featured-text {
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  max-width: 687px;
+  gap: 40px;
+  width: 687px;
   flex-shrink: 0;
+}
+
+.news-insights-featured-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
 .news-insights-category {
@@ -153,6 +198,7 @@
   display: inline-flex;
   align-items: center;
   gap: 20px;
+  height: 60px;
   padding: 14px 24px;
   background-color: var(--color-primary-100);
   color: var(--color-always-white);
@@ -161,7 +207,7 @@
   font-weight: var(--body-font-weight-light);
   text-decoration: none;
   width: fit-content;
-  margin-top: 16px;
+  box-sizing: border-box;
 }
 
 .news-insights-featured-cta:hover {
@@ -247,6 +293,12 @@
     gap: 24px;
   }
 
+  .news-insights-header-right {
+    flex-direction: column;
+    gap: 24px;
+    width: 100%;
+  }
+
   .news-insights-heading {
     font-size: var(--heading-font-size-l);
   }
@@ -254,6 +306,10 @@
   .news-insights-featured {
     flex-direction: column;
     gap: 32px;
+  }
+
+  .news-insights-featured-text {
+    width: 100%;
   }
 
   .news-insights-featured-title {

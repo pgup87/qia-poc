@@ -101,8 +101,10 @@
 .esg-cta {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 20px;
-  padding: 14px 24px;
+  height: 60px;
+  padding: 0 24px;
   background-color: var(--color-primary-100);
   color: var(--color-always-white);
   border-radius: 40px;
@@ -110,6 +112,7 @@
   font-weight: var(--body-font-weight-light);
   text-decoration: none;
   width: fit-content;
+  box-sizing: border-box;
 }
 
 .esg-cta:hover {

@@ -60,8 +60,10 @@
 .about-us-cta {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 20px;
-  padding: 14px 24px;
+  height: 60px;
+  padding: 0 24px;
   background-color: var(--color-primary-100);
   color: var(--color-always-white);
   border-radius: 40px;
@@ -70,6 +72,7 @@
   text-decoration: none;
   width: fit-content;
   margin: 0;
+  box-sizing: border-box;
 }
 
 .about-us-cta:hover {

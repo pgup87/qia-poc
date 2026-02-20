@@ -54,6 +54,19 @@
           "name": "title",
           "label": "CEO Title",
           "value": ""
+        },
+        {
+          "component": "aem-content",
+          "valueType": "string",
+          "name": "ctaLink",
+          "label": "CTA Link"
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "ctaText",
+          "label": "CTA Text",
+          "value": "Learn more"
         }
       ]
     }

@@ -71,6 +71,9 @@ export default function decorate(block) {
 
   // Tabs + content
   if (tabRows.length) {
+    const tabsWrapper = document.createElement('div');
+    tabsWrapper.className = 'careers-banner-tabs-wrapper';
+
     const tabsNav = document.createElement('div');
     tabsNav.className = 'careers-banner-tabs';
 
@@ -109,16 +112,24 @@ export default function decorate(block) {
         }
       }
 
-      // Text content wrapper
+      // Text content wrapper (gap-40px between content group and CTA)
       const textWrapper = document.createElement('div');
       textWrapper.className = 'careers-banner-panel-text';
+
+      // Content group (gap-24px between title-logo and description)
+      const contentGroup = document.createElement('div');
+      contentGroup.className = 'careers-banner-panel-content';
+
+      // Title + Logo group (gap-40px)
+      const titleLogoGroup = document.createElement('div');
+      titleLogoGroup.className = 'careers-banner-panel-title-logo';
 
       // Title (col 2)
       if (cols[2]) {
         const title = document.createElement('h3');
         title.className = 'careers-banner-panel-title';
         title.textContent = cols[2].textContent.trim();
-        textWrapper.appendChild(title);
+        titleLogoGroup.appendChild(title);
       }
 
       // Logo (col 3) — optional image
@@ -131,17 +142,21 @@ export default function decorate(block) {
           const logoWrap = document.createElement('div');
           logoWrap.className = 'careers-banner-panel-logo';
           logoWrap.appendChild(logoOpt);
-          textWrapper.appendChild(logoWrap);
+          titleLogoGroup.appendChild(logoWrap);
         }
       }
+
+      contentGroup.appendChild(titleLogoGroup);
 
       // Description (col 4)
       if (cols[4]) {
         const desc = document.createElement('p');
         desc.className = 'careers-banner-panel-desc';
         desc.textContent = cols[4].textContent.trim();
-        textWrapper.appendChild(desc);
+        contentGroup.appendChild(desc);
       }
+
+      textWrapper.appendChild(contentGroup);
 
       // CTA (col 5)
       const panelCta = cols[5]?.querySelector('a');
@@ -157,8 +172,9 @@ export default function decorate(block) {
       tabsContent.appendChild(panel);
     });
 
-    container.appendChild(tabsNav);
-    container.appendChild(tabsContent);
+    tabsWrapper.appendChild(tabsNav);
+    tabsWrapper.appendChild(tabsContent);
+    container.appendChild(tabsWrapper);
 
     // Tab switching
     tabsNav.addEventListener('click', (e) => {

@@ -19,6 +19,18 @@
   flex-shrink: 0;
 }
 
+.asset-allocation-text-group {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.asset-allocation-label-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+
 .asset-allocation-label {
   font-family: var(--body-font-family);
   font-weight: var(--body-font-weight-normal);
@@ -53,7 +65,7 @@
 .asset-allocation-tabs {
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: 14px;
   width: 394px;
 }
 
@@ -72,6 +84,7 @@
   line-height: 1.25;
   color: var(--color-base-100);
   text-align: left;
+  border-radius: 12px 12px 0 0;
 }
 
 .asset-allocation-tab.active {
@@ -87,13 +100,13 @@
   font-size: 20px;
 }
 
-/* Center Panel - Wheel */
-.asset-allocation-center {
-  flex: 1;
+/* Center Panel - Wheel + Right grouped */
+.asset-allocation-center-right {
   display: flex;
+  gap: 82px;
   align-items: center;
   justify-content: center;
-  padding: 0 43px;
+  padding-left: 43px;
 }
 
 .asset-allocation-wheel {
@@ -135,16 +148,21 @@
 /* Pill labels around wheel */
 .asset-allocation-pill {
   position: absolute;
-  padding: 10px 18px;
-  border: 1px solid var(--color-primary-20);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 18px;
+  border: 0.89px solid var(--color-primary-20);
   border-radius: 36px;
   font-family: var(--body-font-family);
   font-weight: var(--body-font-weight-light);
   font-size: 18px;
   line-height: 1.25;
   color: var(--color-base-100);
-  background: white;
+  background: var(--color-always-white);
   white-space: nowrap;
+  height: 37px;
+  box-sizing: border-box;
 }
 
 .asset-allocation-pill.active {
@@ -193,6 +211,7 @@
   align-items: flex-start;
   justify-content: center;
   flex-shrink: 0;
+  align-self: center;
 }
 
 .asset-allocation-kpi {
@@ -252,8 +271,10 @@
 .asset-allocation-cta {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 20px;
-  padding: 14px 24px;
+  padding: 0 24px;
+  height: 60px;
   background-color: var(--color-primary-100);
   color: var(--color-always-white);
   border-radius: 40px;
@@ -287,8 +308,10 @@
     width: 100%;
   }
 
-  .asset-allocation-center {
-    padding: 0;
+  .asset-allocation-center-right {
+    flex-direction: column;
+    gap: 48px;
+    padding-left: 0;
   }
 
   .asset-allocation-wheel {

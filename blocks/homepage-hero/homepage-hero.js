@@ -47,6 +47,9 @@ export default function decorate(block) {
   const content = document.createElement('div');
   content.className = 'homepage-hero-content';
 
+  const textGroup = document.createElement('div');
+  textGroup.className = 'homepage-hero-text';
+
   const headingEl = document.createElement('div');
   headingEl.className = 'homepage-hero-heading';
   headingEl.innerHTML = `<h1>${heading}</h1>`;
@@ -57,8 +60,9 @@ export default function decorate(block) {
   subtitleEl.textContent = subtitle;
   if (headingRow?.children[1]) moveInstrumentation(headingRow.children[1], subtitleEl);
 
-  content.appendChild(headingEl);
-  content.appendChild(subtitleEl);
+  textGroup.appendChild(headingEl);
+  textGroup.appendChild(subtitleEl);
+  content.appendChild(textGroup);
 
   // Feature cards
   const cardsContainer = document.createElement('div');

@@ -15,7 +15,7 @@ export default function decorate(block) {
 
   const headingRow = rows[1];
   const heading = headingRow?.children[0]?.innerHTML || '';
-  const desc = headingRow?.children[1]?.innerHTML || '';
+  const desc = headingRow?.children[1]?.textContent?.trim() || '';
 
   const tabRow = rows[2];
   const tab1Name = tabRow?.children[0]?.textContent?.trim() || 'ASSET CLASS RANGES';
@@ -39,6 +39,13 @@ export default function decorate(block) {
   const leftPanel = document.createElement('div');
   leftPanel.className = 'asset-allocation-left';
 
+  // Text group (label+heading subgroup + description)
+  const textGroup = document.createElement('div');
+  textGroup.className = 'asset-allocation-text-group';
+
+  const labelHeading = document.createElement('div');
+  labelHeading.className = 'asset-allocation-label-heading';
+
   const labelEl = document.createElement('p');
   labelEl.className = 'asset-allocation-label';
   labelEl.textContent = label;
@@ -49,14 +56,16 @@ export default function decorate(block) {
   headingEl.innerHTML = heading;
   if (headingRow?.children[0]) moveInstrumentation(headingRow.children[0], headingEl);
 
+  labelHeading.appendChild(labelEl);
+  labelHeading.appendChild(headingEl);
+
   const descEl = document.createElement('p');
   descEl.className = 'asset-allocation-desc';
-  descEl.innerHTML = desc;
-  if (headingRow?.children[1]) moveInstrumentation(headingRow.children[1], descEl);
+  descEl.textContent = desc;
 
-  leftPanel.appendChild(labelEl);
-  leftPanel.appendChild(headingEl);
-  leftPanel.appendChild(descEl);
+  textGroup.appendChild(labelHeading);
+  textGroup.appendChild(descEl);
+  leftPanel.appendChild(textGroup);
 
   // Tabs
   const tabsContainer = document.createElement('div');
@@ -74,6 +83,10 @@ export default function decorate(block) {
   tabsContainer.appendChild(tab2);
   leftPanel.appendChild(tabsContainer);
 
+  // Center-Right wrapper (wheel + KPI grouped per Figma)
+  const centerRight = document.createElement('div');
+  centerRight.className = 'asset-allocation-center-right';
+
   // Center - wheel visualization placeholder
   const centerPanel = document.createElement('div');
   centerPanel.className = 'asset-allocation-center';
@@ -88,8 +101,7 @@ export default function decorate(block) {
     return {
       name: cols[0]?.textContent?.trim() || '',
       range: cols[1]?.textContent?.trim() || '',
-      description: cols[2]?.innerHTML || '',
-      descriptionElement: cols[2],
+      description: cols[2]?.textContent?.trim() || '',
       active: cols[3]?.textContent?.trim()?.toLowerCase() === 'true',
     };
   });
@@ -134,10 +146,7 @@ export default function decorate(block) {
 
     const kpiDesc = document.createElement('p');
     kpiDesc.className = 'asset-allocation-kpi-desc';
-    kpiDesc.innerHTML = activeAsset.description;
-    if (activeAsset.descriptionElement) {
-      moveInstrumentation(activeAsset.descriptionElement, kpiDesc);
-    }
+    kpiDesc.textContent = activeAsset.description;
 
     kpiCard.appendChild(kpiTitle);
     kpiCard.appendChild(kpiRange);
@@ -155,8 +164,9 @@ export default function decorate(block) {
   }
 
   container.appendChild(leftPanel);
-  container.appendChild(centerPanel);
-  container.appendChild(rightPanel);
+  centerRight.appendChild(centerPanel);
+  centerRight.appendChild(rightPanel);
+  container.appendChild(centerRight);
 
   block.textContent = '';
   block.appendChild(container);

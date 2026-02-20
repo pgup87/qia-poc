@@ -9,6 +9,13 @@
   gap: 72px;
 }
 
+/* Header Wrapper */
+.sector-cards-header-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
 /* Header */
 .sector-cards-header {
   display: flex;
@@ -65,6 +72,7 @@
   display: inline-flex;
   align-items: center;
   gap: 20px;
+  height: 60px;
   padding: 14px 24px;
   background-color: var(--color-primary-100);
   color: var(--color-always-white);
@@ -75,6 +83,7 @@
   width: fit-content;
   flex-shrink: 0;
   margin: 0;
+  box-sizing: border-box;
 }
 
 .sector-cards-cta:hover {
@@ -123,6 +132,10 @@
   flex: 1.5;
 }
 
+.sector-cards-row:last-child .sector-card {
+  min-height: 399px;
+}
+
 .sector-card-bg {
   position: absolute;
   inset: 0;
@@ -160,6 +173,10 @@
 
 /* Mobile */
 @media (width < 900px) {
+  .sector-cards-header-wrapper {
+    gap: 16px;
+  }
+
   .sector-cards-subheader {
     flex-direction: column;
     gap: 24px;
