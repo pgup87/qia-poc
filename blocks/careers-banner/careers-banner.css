@@ -1,6 +1,15 @@
 /* Careers Banner Block */
-.careers-banner.block {
+.careers-banner-wrapper {
+  margin: 0;
+}
+
+.careers-banner-wrapper > div {
+  max-width: none;
   padding: 0;
+}
+
+.careers-banner.block {
+  padding: var(--section-vertical-gap) var(--section-padding);
   background-color: var(--color-beige);
 }
 
@@ -32,7 +41,6 @@
   line-height: 1.25;
   color: var(--color-base-100);
   margin: 0;
-  letter-spacing: 0.05em;
 }
 
 .careers-banner-heading {
@@ -108,9 +116,9 @@
 .careers-banner-tab {
   flex: 1;
   padding: 24px 0;
-  background: none;
+  background: var(--color-beige);
   border: none;
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid var(--color-base-20);
   font-family: var(--body-font-family);
   font-weight: var(--body-font-weight-light);
   font-size: 24px;
@@ -118,6 +126,7 @@
   cursor: pointer;
   text-align: center;
   transition: border-color 0.3s ease;
+  line-height: 1.25;
 }
 
 .careers-banner-tab.active {

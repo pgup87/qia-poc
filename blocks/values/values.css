@@ -1,4 +1,12 @@
 /* Values Block */
+.values-wrapper {
+  margin: 0;
+}
+
+.values-wrapper > div {
+  padding-top: 72px;
+}
+
 .values.block {
   padding: 0;
 }
@@ -31,7 +39,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  min-height: 342px;
+  min-height: 320px;
   box-sizing: border-box;
 }
 

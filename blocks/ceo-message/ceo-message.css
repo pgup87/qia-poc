@@ -8,6 +8,7 @@
   border-radius: 24px;
   padding: 80px 62px;
   overflow: hidden;
+  position: relative;
 }
 
 .ceo-message-container {
@@ -33,7 +34,6 @@
   line-height: 1.25;
   color: var(--color-base-100);
   margin: 0;
-  letter-spacing: 0.05em;
 }
 
 .ceo-message-cta {

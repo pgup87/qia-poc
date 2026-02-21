@@ -1,4 +1,13 @@
 /* ESG Block */
+.esg-wrapper {
+  margin: 0;
+}
+
+.esg-wrapper > div {
+  max-width: none;
+  padding: 0;
+}
+
 .esg.block {
   padding: 0;
 }
@@ -73,6 +82,14 @@
   border-bottom: 3px solid var(--color-always-white);
 }
 
+.esg-tab .tab-arrow {
+  display: none;
+}
+
+.esg-tab.active .tab-arrow {
+  display: inline;
+}
+
 /* Heading */
 .esg-heading {
   font-family: var(--heading-font-family);
@@ -133,15 +150,19 @@
   z-index: 3;
   width: 250px;
   padding: 40px;
-  border-radius: 20px;
+  border-radius: 24px;
   background: rgb(0 0 0 / 30%);
   backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgb(255 255 255 / 10%);
-  box-shadow: 0 2px 4px rgb(0 0 0 / 25%);
+  box-shadow:
+    inset 0 0 1px rgb(0 0 0 / 10%),
+    0 2px 4px rgb(0 0 0 / 25%);
   display: flex;
   flex-direction: column;
   gap: 32px;
   color: var(--color-always-white);
+  overflow: hidden;
 }
 
 .esg-stat-value {
