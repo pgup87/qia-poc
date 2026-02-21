@@ -401,6 +401,19 @@
         "name": "ceoTitle",
         "label": "CEO Title",
         "value": ""
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "ctaLink",
+        "label": "CTA Link"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "ctaText",
+        "label": "CTA Text",
+        "value": "Learn more"
       }
     ]
   },
@@ -434,6 +447,20 @@
         "multi": false
       },
       {
+        "component": "text",
+        "valueType": "string",
+        "name": "tab1Name",
+        "label": "Tab 1 Name",
+        "value": "SUSTAINABILITY"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "tab2Name",
+        "label": "Tab 2 Name",
+        "value": "IMPACT"
+      },
+      {
         "component": "richtext",
         "name": "heading",
         "value": "",
@@ -446,6 +473,19 @@
         "value": "",
         "label": "Description",
         "valueType": "string"
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "ctaLink",
+        "label": "CTA Link"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "ctaText",
+        "label": "CTA Text",
+        "value": "Our sustainability roadmap"
       },
       {
         "component": "text",
