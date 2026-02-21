@@ -2,22 +2,30 @@ import { createOptimizedPicture } from '../../scripts/aem.js';
 import { moveInstrumentation } from '../../scripts/scripts.js';
 
 export default function decorate(block) {
-  // Expected authored structure:
-  // Row 0: Background image
-  // Row 1: Tab 1 name | Tab 2 name  (e.g. "SUSTAINABILITY" | "IMPACT")
-  // Row 2: Large heading
-  // Row 3: Description text
-  // Row 4: CTA link
-  // Row 5: Stat value (e.g. "50%") | Stat label (e.g. "Zero-carbon") | Stat description
+  // Universal Editor model fields (one row per field, single column):
+  // Row 0: backgroundImage
+  // Row 1: tab1Name
+  // Row 2: tab2Name
+  // Row 3: heading (richtext)
+  // Row 4: description (richtext)
+  // Row 5: ctaLink
+  // Row 6: ctaText
+  // Row 7: statValue
+  // Row 8: statLabel
+  // Row 9: statDescription (richtext)
 
   const rows = [...block.children];
 
   const bgRow = rows[0];
-  const tabRow = rows[1];
-  const headingRow = rows[2];
-  const descRow = rows[3];
-  const ctaRow = rows[4];
-  const statRow = rows[5];
+  const tab1Name = rows[1]?.children[0]?.textContent?.trim() || 'SUSTAINABILITY';
+  const tab2Name = rows[2]?.children[0]?.textContent?.trim() || 'IMPACT';
+  const headingRow = rows[3];
+  const descRow = rows[4];
+  const ctaRow = rows[5];
+  const ctaTextVal = rows[6]?.children[0]?.textContent?.trim() || 'Our sustainability roadmap';
+  const statValue = rows[7]?.children[0]?.textContent?.trim() || '';
+  const statLabel = rows[8]?.children[0]?.textContent?.trim() || '';
+  const statDescRow = rows[9];
 
   // Build block
   const container = document.createElement('div');
@@ -46,21 +54,17 @@ export default function decorate(block) {
   content.className = 'esg-content';
 
   // Tabs
-  if (tabRow) {
-    const tabs = document.createElement('div');
-    tabs.className = 'esg-tabs';
-    const cols = [...tabRow.children];
-    cols.forEach((col, i) => {
-      const tabName = col.textContent.trim();
-      if (tabName) {
-        const tab = document.createElement('button');
-        tab.className = `esg-tab${i === 0 ? ' active' : ''}`;
-        tab.textContent = tabName;
-        tabs.appendChild(tab);
-      }
-    });
-    content.appendChild(tabs);
-  }
+  const tabs = document.createElement('div');
+  tabs.className = 'esg-tabs';
+  [tab1Name, tab2Name].forEach((name, i) => {
+    if (name) {
+      const tab = document.createElement('button');
+      tab.className = `esg-tab${i === 0 ? ' active' : ''}`;
+      tab.textContent = name;
+      tabs.appendChild(tab);
+    }
+  });
+  content.appendChild(tabs);
 
   // Heading
   if (headingRow) {
@@ -86,7 +90,7 @@ export default function decorate(block) {
     const cta = document.createElement('a');
     cta.href = ctaLink.href;
     cta.className = 'button esg-cta';
-    cta.innerHTML = `${ctaLink.textContent} <span class="cta-arrow">→</span>`;
+    cta.innerHTML = `${ctaTextVal} <span class="cta-arrow">→</span>`;
     moveInstrumentation(ctaLink, cta);
     content.appendChild(cta);
   }
@@ -94,31 +98,29 @@ export default function decorate(block) {
   container.appendChild(content);
 
   // Stat card
-  if (statRow) {
-    const statCols = [...statRow.children];
+  if (statValue) {
     const statCard = document.createElement('div');
     statCard.className = 'esg-stat-card';
-    moveInstrumentation(statRow, statCard);
 
-    const statValue = document.createElement('div');
-    statValue.className = 'esg-stat-value';
+    const statValueEl = document.createElement('div');
+    statValueEl.className = 'esg-stat-value';
 
     const valueEl = document.createElement('span');
     valueEl.className = 'esg-stat-number';
-    valueEl.textContent = statCols[0]?.textContent?.trim() || '';
+    valueEl.textContent = statValue;
 
     const labelEl = document.createElement('span');
     labelEl.className = 'esg-stat-label';
-    labelEl.textContent = statCols[1]?.textContent?.trim() || '';
+    labelEl.textContent = statLabel;
 
-    statValue.appendChild(valueEl);
-    statValue.appendChild(labelEl);
-    statCard.appendChild(statValue);
+    statValueEl.appendChild(valueEl);
+    statValueEl.appendChild(labelEl);
+    statCard.appendChild(statValueEl);
 
-    if (statCols[2]) {
+    if (statDescRow) {
       const statDesc = document.createElement('p');
       statDesc.className = 'esg-stat-desc';
-      statDesc.textContent = statCols[2].textContent.trim();
+      statDesc.textContent = statDescRow.children[0]?.textContent?.trim() || '';
       statCard.appendChild(statDesc);
     }
 

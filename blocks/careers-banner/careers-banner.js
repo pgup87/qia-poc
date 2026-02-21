@@ -2,26 +2,23 @@ import { createOptimizedPicture } from '../../scripts/aem.js';
 import { moveInstrumentation } from '../../scripts/scripts.js';
 
 export default function decorate(block) {
-  // Expected authored structure:
-  // Row 0: "CAREERS" label
-  // Row 1: Large heading | Description text
-  // Row 2: CTA link
-  // Row 3..N: Tab rows — tab name | image | content title
-  //   | logo (optional) | content description | CTA link
+  // Universal Editor model fields (one row per field, single column):
+  // Row 0: label
+  // Row 1: heading (richtext)
+  // Row 2: description (richtext)
+  // Row 3: ctaLink
+  // Row 4: ctaText
+  // Row 5..N: child items (career-tab) — each row has cols: tabName | image | title | logo | description
 
   const rows = [...block.children];
 
-  const labelRow = rows[0];
-  const label = labelRow?.children[0]?.textContent?.trim() || '';
+  const label = rows[0]?.children[0]?.textContent?.trim() || '';
+  const heading = rows[1]?.children[0]?.innerHTML || '';
+  const description = rows[2]?.children[0]?.textContent?.trim() || '';
+  const ctaLink = rows[3]?.querySelector('a');
+  const ctaText = rows[4]?.children[0]?.textContent?.trim() || 'Learn more';
 
-  const headingRow = rows[1];
-  const heading = headingRow?.children[0]?.innerHTML || '';
-  const description = headingRow?.children[1]?.textContent?.trim() || '';
-
-  const ctaRow = rows[2];
-  const ctaLink = ctaRow?.querySelector('a');
-
-  const tabRows = rows.slice(3);
+  const tabRows = rows.slice(5);
 
   // Build the block
   const container = document.createElement('div');
@@ -37,12 +34,12 @@ export default function decorate(block) {
   const labelEl = document.createElement('p');
   labelEl.className = 'careers-banner-label';
   labelEl.textContent = label;
-  if (labelRow?.children[0]) moveInstrumentation(labelRow.children[0], labelEl);
+  if (rows[0]?.children[0]) moveInstrumentation(rows[0].children[0], labelEl);
 
   const headingEl = document.createElement('div');
   headingEl.className = 'careers-banner-heading';
   headingEl.innerHTML = heading;
-  if (headingRow?.children[0]) moveInstrumentation(headingRow.children[0], headingEl);
+  if (rows[1]?.children[0]) moveInstrumentation(rows[1].children[0], headingEl);
 
   headerLeft.appendChild(labelEl);
   headerLeft.appendChild(headingEl);
@@ -53,14 +50,14 @@ export default function decorate(block) {
   const descEl = document.createElement('p');
   descEl.className = 'careers-banner-description';
   descEl.textContent = description;
-  if (headingRow?.children[1]) moveInstrumentation(headingRow.children[1], descEl);
+  if (rows[2]?.children[0]) moveInstrumentation(rows[2].children[0], descEl);
   headerRight.appendChild(descEl);
 
   if (ctaLink) {
     const cta = document.createElement('a');
     cta.href = ctaLink.href;
     cta.className = 'button careers-banner-cta';
-    cta.innerHTML = `${ctaLink.textContent} <span class="cta-arrow">→</span>`;
+    cta.innerHTML = `${ctaText} <span class="cta-arrow">→</span>`;
     moveInstrumentation(ctaLink, cta);
     headerRight.appendChild(cta);
   }

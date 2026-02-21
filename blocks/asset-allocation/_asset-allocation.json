@@ -92,7 +92,7 @@
         {
           "component": "text",
           "valueType": "string",
-          "name": "name",
+          "name": "className",
           "label": "Asset Class Name",
           "value": ""
         },

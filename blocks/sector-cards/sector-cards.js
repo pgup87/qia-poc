@@ -2,23 +2,21 @@ import { createOptimizedPicture } from '../../scripts/aem.js';
 import { moveInstrumentation } from '../../scripts/scripts.js';
 
 export default function decorate(block) {
-  // Expected authored structure:
-  // Row 0: "OUR INVESTMENTS" label | (unused)
-  // Row 1: Large heading | Description text
-  // Row 2: CTA link text | CTA URL (optional)
-  // Row 3..N: Sector image | Sector name | Card size (large/small)
+  // Universal Editor model fields (one row per field, single column):
+  // Row 0: label
+  // Row 1: heading (richtext)
+  // Row 2: description (richtext)
+  // Row 3: ctaLink
+  // Row 4: ctaText
+  // Row 5..N: child items (sector-card) — each row has cols: image | name | size
 
   const rows = [...block.children];
 
-  const labelRow = rows[0];
-  const label = labelRow?.children[0]?.textContent?.trim() || '';
-
-  const headingRow = rows[1];
-  const heading = headingRow?.children[0]?.innerHTML || '';
-  const description = headingRow?.children[1]?.textContent?.trim() || '';
-
-  const ctaRow = rows[2];
-  const ctaLink = ctaRow?.querySelector('a');
+  const label = rows[0]?.children[0]?.textContent?.trim() || '';
+  const heading = rows[1]?.children[0]?.innerHTML || '';
+  const description = rows[2]?.children[0]?.textContent?.trim() || '';
+  const ctaLink = rows[3]?.querySelector('a');
+  const ctaText = rows[4]?.children[0]?.textContent?.trim() || 'About our approach';
 
   // Build header
   const container = document.createElement('div');
@@ -33,12 +31,12 @@ export default function decorate(block) {
   const labelEl = document.createElement('p');
   labelEl.className = 'sector-cards-label';
   labelEl.textContent = label;
-  if (labelRow?.children[0]) moveInstrumentation(labelRow.children[0], labelEl);
+  if (rows[0]?.children[0]) moveInstrumentation(rows[0].children[0], labelEl);
 
   const headingEl = document.createElement('div');
   headingEl.className = 'sector-cards-heading';
   headingEl.innerHTML = heading;
-  if (headingRow?.children[0]) moveInstrumentation(headingRow.children[0], headingEl);
+  if (rows[1]?.children[0]) moveInstrumentation(rows[1].children[0], headingEl);
 
   headerLeft.appendChild(labelEl);
   headerLeft.appendChild(headingEl);
@@ -51,14 +49,14 @@ export default function decorate(block) {
   const descEl = document.createElement('p');
   descEl.className = 'sector-cards-description';
   descEl.textContent = description;
-  if (headingRow?.children[1]) moveInstrumentation(headingRow.children[1], descEl);
+  if (rows[2]?.children[0]) moveInstrumentation(rows[2].children[0], descEl);
   subheader.appendChild(descEl);
 
   if (ctaLink) {
     const cta = document.createElement('a');
     cta.href = ctaLink.href;
     cta.className = 'button sector-cards-cta';
-    cta.innerHTML = `${ctaLink.textContent} <span class="cta-arrow">→</span>`;
+    cta.innerHTML = `${ctaText} <span class="cta-arrow">→</span>`;
     moveInstrumentation(ctaLink, cta);
     subheader.appendChild(cta);
   }
@@ -73,7 +71,7 @@ export default function decorate(block) {
   const bottomRow = document.createElement('div');
   bottomRow.className = 'sector-cards-row';
 
-  const sectorRows = rows.slice(3);
+  const sectorRows = rows.slice(5);
 
   sectorRows.forEach((row, index) => {
     const card = document.createElement('div');
