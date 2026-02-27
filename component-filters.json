@@ -24,7 +24,8 @@
       "sector-cards",
       "esg",
       "news-insights",
-      "careers-banner"
+      "careers-banner",
+      "map"
     ]
   },
   {
@@ -76,6 +77,12 @@
     "id": "values",
     "components": [
       "value-card"
+    ]
+  },
+  {
+    "id": "map",
+    "components": [
+      "map-location"
     ]
   }
 ]

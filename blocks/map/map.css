@@ -1,0 +1,144 @@
+#map {
+    width: 100%;
+    height: 1064.44px;
+    position: relative;
+    overflow: hidden;
+    min-height: 100vh;
+}
+
+#map * {
+    box-shadow: none!important;
+    touch-action: none!important;
+    font-family: Antarctica, sans-serif !important;
+    letter-spacing: .05em
+}
+
+#map > div {
+    background-color: transparent!important
+}
+
+/* stylelint-disable-next-line selector-class-pattern */
+.infoBox > img {
+    position: absolute!important;
+    cursor: pointer;
+    margin: 0;
+    bottom: 10px;
+    right: 10px
+}
+
+.myboxmap {
+    background-color: var(--map-box-bg);
+    padding: 10px
+}
+
+.myboxmap::after {
+    content: "";
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    margin-left: -10px;
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 10px solid var(--map-box-bg);
+}
+
+.myboxmap img {
+    width: 220px !important;
+    height: 144px !important;
+    max-width: none !important;
+    object-fit: cover;
+}
+
+.myboxmap p {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    line-height: normal;
+    text-transform: uppercase;
+    font-size: 11px
+}
+
+/* stylelint-disable-next-line selector-class-pattern */
+.carte_box_pays,.carte_box_date,.carte_box_categorie {
+    color: #FFF
+}
+
+/* stylelint-disable-next-line selector-class-pattern */
+p.carte_box_titre {
+    font-weight: 600;
+    padding: 4px 0
+}
+
+/* stylelint-disable-next-line selector-class-pattern */
+p.carte_box_categorie {
+    font-size: 9px;
+    padding-right: 36px
+}
+
+/* stylelint-disable-next-line selector-class-pattern */
+p.carte_box_partenaires {
+    color: var(--map-box-partenaires);
+}
+
+/* stylelint-disable-next-line selector-class-pattern */
+p.carte_box_link a {
+    margin-top: 4px;
+    font-size: 11px;
+    color: var(--map-box-partenaires);
+}
+
+/* stylelint-disable-next-line selector-class-pattern */
+.carte_icone_titre {
+    text-transform: uppercase;
+    color: var(--site-color);
+    margin-bottom: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: .05em
+}
+
+.custom-zoom-button {
+    position: absolute;
+    cursor: pointer;
+    z-index: 1000;
+}
+
+.custom-zoom-button:hover {
+    opacity: 0.8;
+}
+
+#zoom-in {
+    top: calc(50% - 40px);
+    right: 10px;
+    background-repeat: no-repeat
+}
+
+#zoom-in::after {
+    content: '';
+    width: 29px;
+    height: 29px;
+    position: absolute;
+    top: -35px;
+    background-repeat: no-repeat;
+    background-position: center center;
+    left: -2px
+}
+
+#zoom-out {
+    top: calc(50% + 0px);
+    right: 10px;
+    background-repeat: no-repeat
+}
+
+gmp-internal-camera-control {
+    display: none !important;
+}
+
+div.gmnoprint {
+    display: none !important;
+}
+
+img[alt="Google"] {
+    display: none !important;
+}

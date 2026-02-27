@@ -401,6 +401,19 @@
         "name": "title",
         "label": "CEO Title",
         "value": ""
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "ctaLink",
+        "label": "CTA Link"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "ctaText",
+        "label": "CTA Text",
+        "value": "Learn more"
       }
     ]
   },
@@ -434,6 +447,20 @@
         "multi": false
       },
       {
+        "component": "text",
+        "valueType": "string",
+        "name": "tab1Name",
+        "label": "Tab 1 Name",
+        "value": "SUSTAINABILITY"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "tab2Name",
+        "label": "Tab 2 Name",
+        "value": "IMPACT"
+      },
+      {
         "component": "richtext",
         "name": "heading",
         "value": "",
@@ -446,6 +473,19 @@
         "value": "",
         "label": "Description",
         "valueType": "string"
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "ctaLink",
+        "label": "CTA Link"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "ctaText",
+        "label": "CTA Text",
+        "value": "Our sustainability roadmap"
       },
       {
         "component": "text",
@@ -739,6 +779,93 @@
         "value": "",
         "label": "Description",
         "valueType": "string"
+      }
+    ]
+  },
+  {
+    "id": "map",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "apiKey",
+        "label": "Google Maps API Key",
+        "description": "Your Google Maps JavaScript API key",
+        "value": ""
+      },
+      {
+        "component": "text",
+        "valueType": "number",
+        "name": "centerLat",
+        "label": "Center Latitude",
+        "value": "25.3548"
+      },
+      {
+        "component": "text",
+        "valueType": "number",
+        "name": "centerLng",
+        "label": "Center Longitude",
+        "value": "51.1839"
+      },
+      {
+        "component": "text",
+        "valueType": "number",
+        "name": "zoom",
+        "label": "Default Zoom Level",
+        "value": "5"
+      }
+    ]
+  },
+  {
+    "id": "map-location",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "label": "Location Title",
+        "value": ""
+      },
+      {
+        "component": "text",
+        "valueType": "number",
+        "name": "lat",
+        "label": "Latitude",
+        "value": ""
+      },
+      {
+        "component": "text",
+        "valueType": "number",
+        "name": "lng",
+        "label": "Longitude",
+        "value": ""
+      },
+      {
+        "component": "richtext",
+        "name": "description",
+        "label": "Description",
+        "value": "",
+        "valueType": "string"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "category",
+        "label": "Category",
+        "value": ""
+      },
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "image",
+        "label": "Thumbnail Image",
+        "multi": false
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "link",
+        "label": "Detail Link"
       }
     ]
   }

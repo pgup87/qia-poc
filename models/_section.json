@@ -50,7 +50,17 @@
         "hero",
         "cards",
         "columns",
-        "fragment"
+        "fragment",
+        "homepage-hero",
+        "ceo-message",
+        "about-us",
+        "values",
+        "asset-allocation",
+        "sector-cards",
+        "esg",
+        "news-insights",
+        "careers-banner",
+        "map"
       ]
     }
   ]
