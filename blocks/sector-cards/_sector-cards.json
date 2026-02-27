@@ -85,7 +85,7 @@
         {
           "component": "text",
           "valueType": "string",
-          "name": "name",
+          "name": "sectorName",
           "label": "Sector Name",
           "value": ""
         },

@@ -239,7 +239,7 @@
       {
         "component": "text",
         "valueType": "string",
-        "name": "name",
+        "name": "className",
         "label": "Asset Class Name",
         "value": ""
       },
@@ -391,14 +391,14 @@
       {
         "component": "text",
         "valueType": "string",
-        "name": "name",
+        "name": "ceoName",
         "label": "CEO Name",
         "value": ""
       },
       {
         "component": "text",
         "valueType": "string",
-        "name": "title",
+        "name": "ceoTitle",
         "label": "CEO Title",
         "value": ""
       },
@@ -731,7 +731,7 @@
       {
         "component": "text",
         "valueType": "string",
-        "name": "name",
+        "name": "sectorName",
         "label": "Sector Name",
         "value": ""
       },

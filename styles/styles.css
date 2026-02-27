@@ -33,8 +33,12 @@
   /* QIA neutrals */
   --color-base-100: #000;
   --color-base-80: #333;
+  --color-base-20: #ccc;
+  --color-base-10: #e5e5e5;
   --color-tertiary-10: #ededed;
+  --color-tertiary-40: #b8b8b8;
   --color-beige: #fbf6e9;
+  --color-pale: #f8efd9;
   --color-always-white: #fff;
 
   /* fonts */
@@ -248,13 +252,13 @@ main img {
 
 /* sections */
 main > .section {
-  margin: 40px 0;
+  margin: 0;
 }
 
 main > .section > div {
   max-width: 1920px;
   margin: auto;
-  padding: 0 var(--section-padding);
+  padding: var(--section-vertical-gap) var(--section-padding);
 }
 
 main > .section:first-of-type {
@@ -264,7 +268,7 @@ main > .section:first-of-type {
 @media (width >= 900px) {
   main > .section > div {
     max-width: 1920px;
-    padding: 0 var(--section-padding);
+    padding: var(--section-vertical-gap) var(--section-padding);
   }
 }
 

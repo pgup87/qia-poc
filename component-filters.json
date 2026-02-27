@@ -25,7 +25,8 @@
       "esg",
       "news-insights",
       "careers-banner",
-      "map"
+      "map",
+      "fragment"
     ]
   },
   {
@@ -58,7 +59,8 @@
       "text",
       "image",
       "button",
-      "title"
+      "title",
+      "cards"
     ]
   },
   {

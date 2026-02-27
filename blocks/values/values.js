@@ -1,9 +1,9 @@
 import { moveInstrumentation } from '../../scripts/scripts.js';
 
 export default function decorate(block) {
-  // Expected authored structure:
-  // Row 0: "Our values" label | (unused)
-  // Row 1..N: Icon image | Value title | Value description
+  // Universal Editor model fields:
+  // Row 0: label (single column)
+  // Row 1..N: child items (value-card) — each row has cols: icon | title | description
 
   const rows = [...block.children];
 

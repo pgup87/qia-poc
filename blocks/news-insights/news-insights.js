@@ -2,18 +2,23 @@ import { createOptimizedPicture } from '../../scripts/aem.js';
 import { moveInstrumentation } from '../../scripts/scripts.js';
 
 export default function decorate(block) {
-  // Expected authored structure:
-  // Row 0: label (e.g. "FEATURED HIGHLIGHTS") | heading (e.g. "News & Insights")
-  // Row 1: CTA link (view all)
-  // Row 2: Featured — category | title | excerpt | tag | read time | image | CTA link
-  // Row 3..N: Article — category | title | tag | read time | image
+  // Universal Editor model fields (one row per field, single column):
+  // Row 0: label
+  // Row 1: heading
+  // Row 2: ctaLink
+  // Row 3: ctaText
+  // Row 4..N: child items (news-article) — each row has cols: category | title | excerpt | tag | readTime | image
 
   const rows = [...block.children];
 
-  const headerRow = rows[0];
-  const ctaRow = rows[1];
-  const featuredRow = rows[2];
-  const articleRows = rows.slice(3);
+  const label = rows[0]?.children[0]?.textContent?.trim() || '';
+  const headingText = rows[1]?.children[0]?.textContent?.trim() || '';
+  const ctaLinkEl = rows[2]?.querySelector('a');
+  const ctaText = rows[3]?.children[0]?.textContent?.trim() || 'View all';
+
+  const childRows = rows.slice(4);
+  const featuredRow = childRows[0];
+  const articleRows = childRows.slice(1);
 
   // Build block
   const container = document.createElement('div');
@@ -26,17 +31,17 @@ export default function decorate(block) {
   const headerLeft = document.createElement('div');
   headerLeft.className = 'news-insights-header-left';
 
-  if (headerRow) {
-    const label = document.createElement('p');
-    label.className = 'news-insights-label';
-    label.textContent = headerRow.children[0]?.textContent?.trim() || '';
-    moveInstrumentation(headerRow.children[0], label);
-    headerLeft.appendChild(label);
+  if (rows[0]) {
+    const labelP = document.createElement('p');
+    labelP.className = 'news-insights-label';
+    labelP.textContent = label;
+    moveInstrumentation(rows[0].children[0], labelP);
+    headerLeft.appendChild(labelP);
 
     const heading = document.createElement('h2');
     heading.className = 'news-insights-heading';
-    heading.textContent = headerRow.children[1]?.textContent?.trim() || '';
-    if (headerRow.children[1]) moveInstrumentation(headerRow.children[1], heading);
+    heading.textContent = headingText;
+    if (rows[1]?.children[0]) moveInstrumentation(rows[1].children[0], heading);
     headerLeft.appendChild(heading);
   }
 
@@ -59,12 +64,12 @@ export default function decorate(block) {
 
   headerRight.appendChild(filter);
 
-  const ctaLink = ctaRow?.querySelector('a');
+  const ctaLink = ctaLinkEl;
   if (ctaLink) {
     const cta = document.createElement('a');
     cta.href = ctaLink.href;
     cta.className = 'button news-insights-cta';
-    cta.innerHTML = `${ctaLink.textContent} <span class="cta-arrow">→</span>`;
+    cta.innerHTML = `${ctaText} <span class="cta-arrow">→</span>`;
     moveInstrumentation(ctaLink, cta);
     headerRight.appendChild(cta);
   }

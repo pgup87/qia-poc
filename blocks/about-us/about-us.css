@@ -1,4 +1,12 @@
 /* About Us Block */
+.about-us-wrapper {
+  margin: 0;
+}
+
+.about-us-wrapper > div {
+  padding-bottom: 0;
+}
+
 .about-us.block {
   padding: 0;
 }
@@ -16,7 +24,6 @@
   line-height: 1.25;
   color: var(--color-base-100);
   margin: 0;
-  letter-spacing: 0.05em;
 }
 
 .about-us-content {

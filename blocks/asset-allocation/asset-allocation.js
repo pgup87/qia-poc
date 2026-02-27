@@ -1,35 +1,27 @@
 import { moveInstrumentation } from '../../scripts/scripts.js';
 
 export default function decorate(block) {
-  // Expected authored structure:
-  // Row 0: label (e.g. "ASSET ALLOCATION")
-  // Row 1: heading | description
-  // Row 2: Tab 1 name | Tab 2 name  (e.g. "ASSET CLASS RANGES" | "REGIONAL OPERATING RANGES")
-  // Row 3..N: asset class rows — name | percentage range | description | active ("true"/"false")
-  // Last row: CTA link
+  // Universal Editor model fields (one row per field, single column):
+  // Row 0: label
+  // Row 1: heading (richtext)
+  // Row 2: description (richtext)
+  // Row 3: tab1 name
+  // Row 4: tab2 name
+  // Row 5: ctaLink
+  // Row 6: ctaText
+  // Row 7..N: child items (asset-class) — each row has cols: name | range | description | active
 
   const rows = [...block.children];
 
-  const labelRow = rows[0];
-  const label = labelRow?.children[0]?.textContent?.trim() || '';
+  const label = rows[0]?.children[0]?.textContent?.trim() || '';
+  const heading = rows[1]?.children[0]?.innerHTML || '';
+  const desc = rows[2]?.children[0]?.textContent?.trim() || '';
+  const tab1Name = rows[3]?.children[0]?.textContent?.trim() || 'ASSET CLASS RANGES';
+  const tab2Name = rows[4]?.children[0]?.textContent?.trim() || 'REGIONAL OPERATING RANGES';
+  const ctaLink = rows[5]?.querySelector('a');
+  const ctaText = rows[6]?.children[0]?.textContent?.trim() || 'Learn more';
 
-  const headingRow = rows[1];
-  const heading = headingRow?.children[0]?.innerHTML || '';
-  const desc = headingRow?.children[1]?.textContent?.trim() || '';
-
-  const tabRow = rows[2];
-  const tab1Name = tabRow?.children[0]?.textContent?.trim() || 'ASSET CLASS RANGES';
-  const tab2Name = tabRow?.children[1]?.textContent?.trim() || 'REGIONAL OPERATING RANGES';
-
-  // Find CTA (last row with a link)
-  let ctaLink = null;
-  let assetRows = rows.slice(3);
-  const lastRow = assetRows[assetRows.length - 1];
-  const lastLink = lastRow?.querySelector('a');
-  if (lastLink) {
-    ctaLink = lastLink;
-    assetRows = assetRows.slice(0, -1);
-  }
+  const assetRows = rows.slice(7);
 
   // Build layout
   const container = document.createElement('div');
@@ -49,12 +41,12 @@ export default function decorate(block) {
   const labelEl = document.createElement('p');
   labelEl.className = 'asset-allocation-label';
   labelEl.textContent = label;
-  if (labelRow?.children[0]) moveInstrumentation(labelRow.children[0], labelEl);
+  if (rows[0]?.children[0]) moveInstrumentation(rows[0].children[0], labelEl);
 
   const headingEl = document.createElement('div');
   headingEl.className = 'asset-allocation-heading';
   headingEl.innerHTML = heading;
-  if (headingRow?.children[0]) moveInstrumentation(headingRow.children[0], headingEl);
+  if (rows[1]?.children[0]) moveInstrumentation(rows[1].children[0], headingEl);
 
   labelHeading.appendChild(labelEl);
   labelHeading.appendChild(headingEl);
@@ -159,7 +151,7 @@ export default function decorate(block) {
     const cta = document.createElement('a');
     cta.href = ctaLink.href;
     cta.className = 'button asset-allocation-cta';
-    cta.innerHTML = `${ctaLink.textContent} <span class="cta-arrow">→</span>`;
+    cta.innerHTML = `${ctaText} <span class="cta-arrow">→</span>`;
     rightPanel.appendChild(cta);
   }
 

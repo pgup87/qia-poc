@@ -2,11 +2,14 @@ import { createOptimizedPicture } from '../../scripts/aem.js';
 import { moveInstrumentation } from '../../scripts/scripts.js';
 
 export default function decorate(block) {
-  // Expected authored structure:
-  // Row 0: "CEO MESSAGE" label | (unused)
-  // Row 1: Quote text | CEO Photo
-  // Row 2: CEO Name | CEO Title
-  // Row 3: CTA link text | CTA URL
+  // Universal Editor model fields produce one row per field:
+  // Row 0: label (Section Label)
+  // Row 1: quote (Quote Text - richtext)
+  // Row 2: photo (CEO Photo - reference/picture)
+  // Row 3: ceoName (CEO Name)
+  // Row 4: ceoTitle (CEO Title)
+  // Row 5: ctaLink (CTA Link)
+  // Row 6: ctaText (CTA Text)
 
   const rows = [...block.children];
 
@@ -15,28 +18,51 @@ export default function decorate(block) {
 
   const quoteRow = rows[1];
   const quoteText = quoteRow?.children[0]?.innerHTML || '';
-  const photoCol = quoteRow?.children[1];
-  const photoPicture = photoCol?.querySelector('picture');
 
-  const nameRow = rows[2];
+  const photoRow = rows[2];
+  const photoPicture = photoRow?.querySelector('picture');
+
+  const nameRow = rows[3];
   const ceoName = nameRow?.children[0]?.textContent?.trim() || '';
-  const ceoTitle = nameRow?.children[1]?.textContent?.trim() || '';
 
-  const ctaRow = rows[3];
-  const ctaLink = ctaRow?.querySelector('a');
+  const titleRow = rows[4];
+  const ceoTitle = titleRow?.children[0]?.textContent?.trim() || '';
+
+  const ctaLinkRow = rows[5];
+  const ctaLink = ctaLinkRow?.querySelector('a');
+
+  const ctaTextRow = rows[6];
+  const ctaText = ctaTextRow?.children[0]?.textContent?.trim() || 'Learn more';
 
   // Build the block
   const container = document.createElement('div');
   container.className = 'ceo-message-container';
 
-  // Left side - text content
+  // Left column - label + CTA
   const leftCol = document.createElement('div');
-  leftCol.className = 'ceo-message-text';
+  leftCol.className = 'ceo-message-left';
 
   const labelEl = document.createElement('p');
   labelEl.className = 'ceo-message-label';
   labelEl.textContent = label;
   if (labelRow?.children[0]) moveInstrumentation(labelRow.children[0], labelEl);
+  leftCol.appendChild(labelEl);
+
+  if (ctaLink) {
+    const cta = document.createElement('a');
+    cta.href = ctaLink.href;
+    cta.className = 'button ceo-message-cta';
+    cta.innerHTML = `${ctaText} <span class="cta-arrow">→</span>`;
+    moveInstrumentation(ctaLink, cta);
+    leftCol.appendChild(cta);
+  }
+
+  // Right column - quote + attribution
+  const rightCol = document.createElement('div');
+  rightCol.className = 'ceo-message-right';
+
+  const quoteSection = document.createElement('div');
+  quoteSection.className = 'ceo-message-quote-section';
 
   const quoteEl = document.createElement('div');
   quoteEl.className = 'ceo-message-quote';
@@ -54,34 +80,13 @@ export default function decorate(block) {
   const titleEl = document.createElement('p');
   titleEl.className = 'ceo-message-title';
   titleEl.textContent = ceoTitle;
-  if (nameRow?.children[1]) moveInstrumentation(nameRow.children[1], titleEl);
+  if (titleRow?.children[0]) moveInstrumentation(titleRow.children[0], titleEl);
 
   attribution.appendChild(nameEl);
   attribution.appendChild(titleEl);
 
-  const ctaCol = document.createElement('div');
-  ctaCol.className = 'ceo-message-left';
-
-  ctaCol.appendChild(labelEl);
-
-  if (ctaLink) {
-    const cta = document.createElement('a');
-    cta.href = ctaLink.href;
-    cta.className = 'button ceo-message-cta';
-    cta.innerHTML = `${ctaLink.textContent} <span class="cta-arrow">→</span>`;
-    moveInstrumentation(ctaLink, cta);
-    ctaCol.appendChild(cta);
-  }
-
-  // Right side with quote and photo
-  const rightCol = document.createElement('div');
-  rightCol.className = 'ceo-message-right';
-
-  const quoteSection = document.createElement('div');
-  quoteSection.className = 'ceo-message-quote-section';
   quoteSection.appendChild(quoteEl);
   quoteSection.appendChild(attribution);
-
   rightCol.appendChild(quoteSection);
 
   // Photo
@@ -96,7 +101,7 @@ export default function decorate(block) {
     }
   }
 
-  container.appendChild(ctaCol);
+  container.appendChild(leftCol);
   container.appendChild(rightCol);
   container.appendChild(photoWrapper);
 

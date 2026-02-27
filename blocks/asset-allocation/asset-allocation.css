@@ -1,4 +1,8 @@
 /* Asset Allocation Block */
+.asset-allocation-wrapper {
+  margin: 0;
+}
+
 .asset-allocation.block {
   padding: 0;
 }
@@ -89,7 +93,7 @@
 
 .asset-allocation-tab.active {
   font-weight: var(--body-font-weight-normal);
-  border-bottom: 3px solid var(--color-primary-100);
+  border-bottom: 3px solid var(--color-secondary-100);
 }
 
 .asset-allocation-tab:not(.active) {
