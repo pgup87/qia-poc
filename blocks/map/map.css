@@ -4,15 +4,9 @@
     height: 600px;
     min-height: 50vh;
     position: relative;
-    overflow: hidden;
 }
 
-.map .map-container * {
-    box-shadow: none!important;
-    touch-action: none!important;
-    font-family: Antarctica, sans-serif !important;
-    letter-spacing: .05em
-}
+/* Google Maps wrapper – avoid overriding internal Google Maps styles */
 
 /* stylelint-disable-next-line selector-class-pattern */
 .infoBox > img {

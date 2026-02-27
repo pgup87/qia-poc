@@ -39,27 +39,32 @@ function loadGoogleMaps(apiKey) {
 }
 
 /**
- * Parse authored rows out of the block table.
+ * Parse authored rows out of the block.
  *
- * Expected authored structure (rows inside the block):
- *   Row 0 (config)  : apiKey | centerLat | centerLng | zoom
- *   Row 1…N (pins)  : title | lat | lng | description | category | image | link
+ * In xwalk each model field becomes its own row (single-column div):
+ *   Row 0 : apiKey
+ *   Row 1 : centerLat
+ *   Row 2 : centerLng
+ *   Row 3 : zoom
+ *   Row 4…N : map-location child items (each row has 7 cols):
+ *             title | lat | lng | description | category | image | link
  */
 function parseBlock(block) {
   const rows = [...block.children];
   if (!rows.length) return { config: {}, locations: [] };
 
-  /* first row = map-level config */
-  const cfgCols = [...rows[0].children];
+  /* each parent-model field is its own row with a single column */
+  const val = (rowIdx) => rows[rowIdx]?.children?.[0]?.textContent?.trim() || '';
+
   const config = {
-    apiKey: cfgCols[0]?.textContent?.trim() || '',
-    centerLat: parseFloat(cfgCols[1]?.textContent?.trim()) || 25.3548,
-    centerLng: parseFloat(cfgCols[2]?.textContent?.trim()) || 51.1839,
-    zoom: parseInt(cfgCols[3]?.textContent?.trim(), 10) || 5,
+    apiKey: val(0),
+    centerLat: parseFloat(val(1)) || 25.3548,
+    centerLng: parseFloat(val(2)) || 51.1839,
+    zoom: parseInt(val(3), 10) || 5,
   };
 
-  /* remaining rows = location pins */
-  const locations = rows.slice(1).map((row) => {
+  /* child-item rows start after the 4 config rows */
+  const locations = rows.slice(4).map((row) => {
     const cols = [...row.children];
     const img = cols[5]?.querySelector('img');
     const anchor = cols[6]?.querySelector('a');
@@ -81,6 +86,9 @@ function parseBlock(block) {
 /* ── main decorate ─────────────────────────────────────────────── */
 export default async function decorate(block) {
   const { config, locations } = parseBlock(block);
+
+  // eslint-disable-next-line no-console
+  console.log('[Map Block] config:', JSON.stringify(config), '| locations:', locations.length);
 
   /* build container */
   block.textContent = '';
