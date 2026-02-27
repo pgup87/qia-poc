@@ -1,13 +1,20 @@
 /* ── Google-Maps styling (formerly mapstyles.js) ───────────────── */
 const mapStyles = [
   { featureType: 'all', elementType: 'labels', stylers: [{ visibility: 'off' }] },
-  { featureType: 'administrative', elementType: 'all', stylers: [{ visibility: 'off' }] },
+  // Show country names and borders
+  { featureType: 'administrative.country', elementType: 'labels.text', stylers: [{ visibility: 'on' }, { color: '#6B7E7C' }] },
+  { featureType: 'administrative.country', elementType: 'geometry.stroke', stylers: [{ visibility: 'on' }, { color: '#ffffff' }, { weight: 0.8 }] },
+  // Continent-level labels
+  { featureType: 'administrative.province', elementType: 'all', stylers: [{ visibility: 'off' }] },
+  { featureType: 'administrative.locality', elementType: 'all', stylers: [{ visibility: 'off' }] },
+  // Land & water
   { featureType: 'landscape', elementType: 'geometry.fill', stylers: [{ visibility: 'on' }, { color: '#c6c5c2' }] },
+  { featureType: 'water', elementType: 'geometry.fill', stylers: [{ visibility: 'on' }, { color: '#edecea' }] },
+  { featureType: 'water', elementType: 'labels', stylers: [{ visibility: 'off' }] },
+  // Hide clutter
   { featureType: 'poi', elementType: 'all', stylers: [{ visibility: 'off' }] },
   { featureType: 'road', elementType: 'all', stylers: [{ visibility: 'off' }] },
   { featureType: 'transit', elementType: 'all', stylers: [{ visibility: 'off' }] },
-  { featureType: 'water', elementType: 'geometry.fill', stylers: [{ visibility: 'on' }, { color: '#edecea' }] },
-  { featureType: 'water', elementType: 'labels', stylers: [{ visibility: 'off' }] },
 ];
 
 /* ── helpers ────────────────────────────────────────────────────── */
@@ -79,7 +86,7 @@ export default async function decorate(block) {
   block.textContent = '';
 
   const mapContainer = document.createElement('div');
-  mapContainer.id = 'map';
+  mapContainer.classList.add('map-container');
   block.append(mapContainer);
 
   if (!config.apiKey) {
