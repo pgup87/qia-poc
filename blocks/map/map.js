@@ -3,27 +3,12 @@
 /**
  * Map Block — matches the design from revmedclinicaltrials.com/clinical-trials
  *
- * - Clean Google Maps with default country labels and borders
- * - Light silver style (subtle, not blank)
+ * - Default Google Maps styling (terrain, labels, borders)
+ * - All native controls: Map/Satellite, fullscreen, Street View, zoom, compass
  * - Custom SVG pin markers (dark teal)
  * - Click-to-open side panel with location details
  * - fitBounds to show all markers, maxZoom 5
- * - gestureHandling: cooperative
  */
-
-/* ── Clean / Silver map style (shows countries, hides clutter) ─ */
-const mapStyles = [
-  { featureType: 'poi', elementType: 'all', stylers: [{ visibility: 'off' }] },
-  { featureType: 'transit', elementType: 'all', stylers: [{ visibility: 'off' }] },
-  { featureType: 'road', elementType: 'all', stylers: [{ visibility: 'off' }] },
-  { featureType: 'landscape', elementType: 'geometry', stylers: [{ color: '#e8e8e8' }] },
-  { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#c9d6df' }] },
-  { featureType: 'administrative.country', elementType: 'geometry.stroke', stylers: [{ color: '#bbbbbb' }, { weight: 1 }] },
-  { featureType: 'administrative.country', elementType: 'labels.text.fill', stylers: [{ color: '#555555' }] },
-  { featureType: 'administrative.province', elementType: 'geometry.stroke', stylers: [{ visibility: 'off' }] },
-  { featureType: 'administrative.province', elementType: 'labels', stylers: [{ visibility: 'off' }] },
-  { featureType: 'administrative.locality', elementType: 'labels', stylers: [{ visibility: 'off' }] },
-];
 
 /* ── SVG marker as data-URI (teal map-pin style) ──────────────── */
 const MARKER_SVG = `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(
@@ -147,20 +132,39 @@ export default async function decorate(block) {
     return;
   }
 
-  /* ── create map ─────────────────────────────────────────────── */
+  /* ── create map (default Google Maps look + all controls) ──── */
   const map = new google.maps.Map(mapContainer, {
     center: { lat: config.centerLat, lng: config.centerLng },
     zoom: config.zoom,
     maxZoom: 5,
-    styles: mapStyles,
-    gestureHandling: 'cooperative',
-    mapTypeControl: false,
-    streetViewControl: false,
-    fullscreenControl: false,
+    gestureHandling: 'greedy',
+    /* Map / Satellite toggle (top-left) */
+    mapTypeControl: true,
+    mapTypeControlOptions: {
+      style: google.maps.MapTypeControlStyle.DEFAULT,
+      position: google.maps.ControlPosition.TOP_LEFT,
+    },
+    /* Fullscreen button (top-right) */
+    fullscreenControl: true,
+    fullscreenControlOptions: {
+      position: google.maps.ControlPosition.TOP_RIGHT,
+    },
+    /* Zoom +/- (bottom-right) */
     zoomControl: true,
     zoomControlOptions: {
-      position: google.maps.ControlPosition.RIGHT_CENTER,
+      position: google.maps.ControlPosition.RIGHT_BOTTOM,
     },
+    /* Street View pegman (bottom-right) */
+    streetViewControl: true,
+    streetViewControlOptions: {
+      position: google.maps.ControlPosition.RIGHT_BOTTOM,
+    },
+    /* Camera / compass rotation (bottom-right) */
+    rotateControl: true,
+    rotateControlOptions: {
+      position: google.maps.ControlPosition.RIGHT_BOTTOM,
+    },
+    scaleControl: true,
   });
 
   /* ── marker icon ────────────────────────────────────────────── */

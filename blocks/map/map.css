@@ -116,13 +116,5 @@
     color: #0e4343;
 }
 
-/* ── Hide unwanted Google Maps chrome ──────────────────────────── */
-.map gmp-internal-camera-control {
-    display: none !important;
-}
-
-/* Keep Google logo visible (required by TOS) but hide noise */
-.map .gm-style-cc {
-    display: none !important;
-}
+/* ── Google Maps chrome: keep all native controls visible ──────── */
 }
