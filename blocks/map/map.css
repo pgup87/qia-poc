@@ -1,131 +1,128 @@
-/* ── Map block container ────────────────────────────────────────── */
+/* ── Map Block ─ matching revmedclinicaltrials.com design ──────── */
+
 .map {
     width: 100%;
+    padding: 0;
 }
 
-#map {
+/* Wrapper holds the side-panel + canvas */
+.map .map-wrapper {
+    position: relative;
     width: 100%;
     height: 80vh;
     min-height: 500px;
     max-height: 900px;
-    position: relative;
     overflow: hidden;
+    background: #e8e8e8;
 }
 
-/* ── InfoBox popup ──────────────────────────────────────────────── */
-/* stylelint-disable-next-line selector-class-pattern */
-.infoBox > img {
-    position: absolute!important;
-    cursor: pointer;
-    margin: 0;
-    bottom: 10px;
-    right: 10px;
+/* Google Maps canvas */
+.map .map-canvas {
+    width: 100%;
+    height: 100%;
 }
 
-.myboxmap {
-    background-color: #6B7E7C;
-    padding: 10px;
-}
-
-.myboxmap::after {
-    content: "";
+/* ── Side panel (slides in from the left on marker click) ──────── */
+.map .map-panel {
     position: absolute;
-    bottom: -10px;
-    left: 50%;
-    margin-left: -10px;
-    width: 0;
-    height: 0;
-    border-left: 10px solid transparent;
-    border-right: 10px solid transparent;
-    border-top: 10px solid #6B7E7C;
+    top: 0;
+    left: 0;
+    width: 25%;
+    min-width: 260px;
+    height: 100%;
+    background: #fff;
+    box-shadow: 4px 0 12px rgba(0 0 0 / 15%);
+    z-index: 10;
+    overflow-y: auto;
+    transform: translateX(-100%);
+    opacity: 0;
+    transition: transform 0.25s ease-out, opacity 0.25s ease-out;
+    pointer-events: none;
 }
 
-.myboxmap img {
-    width: 220px !important;
-    height: 144px !important;
-    max-width: none !important;
+.map .map-panel.open {
+    transform: translateX(0);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.map .map-panel-close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #0e4343;
+    cursor: pointer;
+    line-height: 1;
+    padding: 4px 8px;
+    z-index: 1;
+}
+
+.map .map-panel-close:hover {
+    color: #000;
+}
+
+.map .map-panel-inner {
+    padding: 32px 20px 20px;
+}
+
+.map .map-panel-img {
+    width: 100%;
+    height: auto;
+    border-radius: 4px;
+    margin-bottom: 12px;
     object-fit: cover;
 }
 
-.myboxmap p {
-    margin-bottom: 0;
-    padding-bottom: 0;
-    line-height: normal;
-    text-transform: uppercase;
-    font-size: 11px;
-    color: #fff;
+.map .map-panel-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #0e4343;
+    margin: 0 0 8px;
+    text-decoration: underline;
+    text-underline-offset: 3px;
 }
 
-/* stylelint-disable-next-line selector-class-pattern */
-p.carte_box_titre {
+.map .map-panel-category {
+    display: inline-block;
+    background: #234b43;
+    color: #fff;
+    font-size: 0.75rem;
+    padding: 4px 12px;
+    border-radius: 16px;
+    margin-bottom: 12px;
+    text-transform: capitalize;
+}
+
+.map .map-panel-desc {
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: #333;
+    margin-bottom: 16px;
+}
+
+.map .map-panel-link {
+    display: inline-block;
+    font-size: 0.875rem;
     font-weight: 600;
-    padding: 4px 0;
-    color: #fff;
+    color: #234b43;
+    text-decoration: underline;
+    text-underline-offset: 3px;
 }
 
-/* stylelint-disable-next-line selector-class-pattern */
-p.carte_box_categorie {
-    font-size: 9px;
-    padding-right: 36px;
-    color: #fff;
+.map .map-panel-link:hover {
+    color: #0e4343;
 }
 
-/* stylelint-disable-next-line selector-class-pattern */
-p.carte_box_desc {
-    font-size: 10px;
-    color: #ddd;
-}
-
-/* stylelint-disable-next-line selector-class-pattern */
-p.carte_box_link a {
-    margin-top: 4px;
-    font-size: 11px;
-    color: #ccc;
-    text-decoration: none;
-}
-
-p.carte_box_link a:hover {
-    color: #fff;
-}
-
-/* ── Custom zoom buttons ────────────────────────────────────────── */
-.custom-zoom-button {
-    position: absolute;
-    cursor: pointer;
-    z-index: 1000;
-    background: #fff;
-    border-radius: 2px;
-    box-shadow: 0 1px 4px rgba(0 0 0 / 30%);
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.custom-zoom-button:hover {
-    background: #f5f5f5;
-}
-
-#zoom-in {
-    top: calc(50% - 36px);
-    right: 10px;
-}
-
-#zoom-out {
-    top: calc(50% + 2px);
-    right: 10px;
-}
-
-/* ── Hide Google Maps default controls ──────────────────────────── */
-gmp-internal-camera-control {
+/* ── Hide unwanted Google Maps chrome ──────────────────────────── */
+.map gmp-internal-camera-control {
     display: none !important;
 }
 
-div.gmnoprint {
+/* Keep Google logo visible (required by TOS) but hide noise */
+.map .gm-style-cc {
     display: none !important;
 }
-
-img[alt="Google"] {
-    display: none !important;
 }
