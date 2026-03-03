@@ -16,7 +16,7 @@
  */
 
 /* ── AEM publish host & GraphQL path ───────────────────────────── */
-const ORIGIN = 'https://publish-p178131-e1882764.adobeaemcloud.com';
+const ORIGIN = 'https://publish-p52710-e1559444.adobeaemcloud.com';
 const GRAPHQL_PATH = '/graphql/execute.json/piyush-unbranded-revmed-site';
 /* ── Custom marker SVG (white pin + teal diamond logo) ─────────── */
 const MARKER_SVG = `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(
