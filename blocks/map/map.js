@@ -71,7 +71,7 @@ function loadGoogleMaps(apiKey) {
  * @returns {Promise<Array>} parsed region objects
  */
 async function fetchRegionData() {
-  const endpoint = `${AEM_PUBLISH_HOST}/content/cq:graphql/piyush-revmed-site/endpoint.json`;
+  const endpoint = `${AEM_PUBLISH_HOST}/content/cq:graphql/piyush-unbranded-revmed-site/endpoint.json`;
 
   const resp = await fetch(endpoint, {
     method: 'POST',
