@@ -15,8 +15,8 @@
  * AEM host is derived automatically from the page's origin or fstab.yaml.
  */
 
-/* ── AEM author host (derived from fstab.yaml mountpoint) ──────── */
-const AEM_AUTHOR_HOST = 'https://author-p52710-e1559444.adobeaemcloud.com';
+/* ── AEM publish host ──────────────────────────────────────────── */
+const AEM_PUBLISH_HOST = 'https://publish-p52710-e1559444.adobeaemcloud.com';
 
 /* ── GraphQL inline query ──────────────────────────────────────── */
 const GQL_QUERY = `{
@@ -32,7 +32,6 @@ const GQL_QUERY = `{
     }
   }
 }`;
-
 /* ── Custom marker SVG (white pin + teal diamond logo) ─────────── */
 const MARKER_SVG = `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(
   `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 56" width="40" height="56">
@@ -72,7 +71,7 @@ function loadGoogleMaps(apiKey) {
  * @returns {Promise<Array>} parsed region objects
  */
 async function fetchRegionData() {
-  const endpoint = `${AEM_AUTHOR_HOST}/content/cq:graphql/revmed-aem-core/endpoint.json`;
+  const endpoint = `${AEM_PUBLISH_HOST}/content/cq:graphql/piyush-revmed-site/endpoint.json`;
 
   const resp = await fetch(endpoint, {
     method: 'POST',
