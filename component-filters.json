@@ -80,11 +80,5 @@
     "components": [
       "value-card"
     ]
-  },
-  {
-    "id": "map",
-    "components": [
-      "map-location"
-    ]
   }
 ]

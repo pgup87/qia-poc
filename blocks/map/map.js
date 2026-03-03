@@ -1,26 +1,37 @@
 /* eslint-disable no-undef */
 
 /**
- * Map Block — matches the design from revmedclinicaltrials.com/clinical-trials
+ * Map Block — Fetches region / country / state data from AEM Content
+ * Fragments via a persisted GraphQL query and renders interactive
+ * markers with popup overlays.
  *
- * - Default Google Maps styling (terrain, labels, borders)
- * - All native controls: Map/Satellite, fullscreen, Street View, zoom, compass
- * - Custom SVG pin markers (dark teal)
- * - Click-to-open side panel with location details
- * - fitBounds to show all markers, maxZoom 5
+ * Block model fields (xwalk rows):
+ *   Row 0 : apiKey      – Google Maps JavaScript API key
+ *   Row 1 : aemHost     – AEM publish host for GraphQL
+ *                          e.g. https://publish-p52710-e1559444.adobeaemcloud.com
+ *
+ * Persisted query path:
+ *   /graphql/execute.json/revmed-aem-core/getMapRegions
  */
 
-/* ── SVG marker as data-URI (teal map-pin style) ──────────────── */
+/* ── Custom marker SVG (white pin + teal diamond logo) ─────────── */
 const MARKER_SVG = `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(
   `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 56" width="40" height="56">
-    <path d="M20 0C8.954 0 0 8.954 0 20c0 14 20 36 20 36s20-22 20-36C40 8.954 31.046 0 20 0z" fill="#234b43"/>
-    <circle cx="20" cy="18" r="8" fill="#fff"/>
+    <defs>
+      <filter id="s" x="-20%" y="-10%" width="140%" height="130%">
+        <feDropShadow dx="0" dy="1" stdDeviation="1.5" flood-color="#000" flood-opacity="0.25"/>
+      </filter>
+    </defs>
+    <path d="M20 0C8.954 0 0 8.954 0 20c0 14 20 36 20 36s20-22 20-36C40 8.954 31.046 0 20 0z"
+          fill="#fff" stroke="#1a3c3c" stroke-width="1.2" filter="url(#s)"/>
+    <path d="M20 8L28 18L20 28L12 18Z" fill="#234b43"/>
+    <path d="M20 11L25.5 18L20 25L14.5 18Z" fill="#4a8b7f" opacity="0.5"/>
   </svg>`,
 )}`;
 
 /* ── helpers ────────────────────────────────────────────────────── */
 
-/** Load Google Maps JS API. */
+/** Dynamically load the Google Maps JavaScript API. */
 function loadGoogleMaps(apiKey) {
   return new Promise((resolve, reject) => {
     if (window.google?.maps) { resolve(); return; }
@@ -35,64 +46,100 @@ function loadGoogleMaps(apiKey) {
 }
 
 /**
- * Parse authored block rows (xwalk: each model field = own row).
+ * Fetch region data from AEM Content Fragments via persisted GraphQL.
+ *
+ * Expected persisted query  : getMapRegions
+ * Expected CF model         : map-model  (fields: regionName, countryStateDetails)
+ *
+ * The persisted query should be:
+ *   query getMapRegions {
+ *     mapModelList {
+ *       items {
+ *         _path
+ *         regionName
+ *         countryStateDetails
+ *       }
+ *     }
+ *   }
+ *
+ * @param {string} aemHost – AEM host URL (author or publish)
+ * @returns {Promise<Array>} parsed region objects
+ */
+async function fetchRegionData(aemHost) {
+  const host = aemHost.replace(/\/+$/, '');
+  const endpoint = `${host}/graphql/execute.json/revmed-aem-core/getMapRegions`;
+
+  const resp = await fetch(endpoint, {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json' },
+  });
+
+  if (!resp.ok) throw new Error(`GraphQL request failed: ${resp.status}`);
+
+  const json = await resp.json();
+  const items = json?.data?.mapModelList?.items || [];
+
+  return items.map((item) => {
+    let country = {};
+    try {
+      const parsed = JSON.parse(item.countryStateDetails);
+      country = parsed.country || parsed;
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.warn('[Map Block] Could not parse countryStateDetails', e);
+    }
+
+    /* coordinates may be stored as "coordinates" or "cordinates" (legacy typo) */
+    const coords = country.coordinates || country.cordinates || '';
+    let lat = 0;
+    let lng = 0;
+    if (coords) {
+      const parts = coords.split(',').map((v) => v.trim());
+      lat = parseFloat(parts[0]) || 0;
+      lng = parseFloat(parts[1]) || 0;
+    }
+
+    return {
+      regionName: item.regionName || '',
+      countryName: country.name || '',
+      lat,
+      lng,
+      states: country.states || [],
+    };
+  }).filter((r) => r.lat !== 0 && r.lng !== 0);
+}
+
+/**
+ * Parse block rows delivered by xwalk (each model field = one row).
  *   Row 0 : apiKey
- *   Row 1 : centerLat
- *   Row 2 : centerLng
- *   Row 3 : zoom
- *   Row 4…N : map-location child items (7 cols each)
+ *   Row 1 : aemHost
  */
 function parseBlock(block) {
   const rows = [...block.children];
-  if (!rows.length) return { config: {}, locations: [] };
-
   const val = (i) => rows[i]?.children?.[0]?.textContent?.trim() || '';
-
-  const config = {
+  return {
     apiKey: val(0),
-    centerLat: parseFloat(val(1)) || 25.3548,
-    centerLng: parseFloat(val(2)) || 51.1839,
-    zoom: parseInt(val(3), 10) || 2,
+    aemHost: val(1),
   };
-
-  const locations = rows.slice(4).map((row) => {
-    const cols = [...row.children];
-    const img = cols[5]?.querySelector('img');
-    const anchor = cols[6]?.querySelector('a');
-    return {
-      title: cols[0]?.textContent?.trim() || '',
-      lat: parseFloat(cols[1]?.textContent?.trim()) || 0,
-      lng: parseFloat(cols[2]?.textContent?.trim()) || 0,
-      description: cols[3]?.innerHTML || '',
-      category: cols[4]?.textContent?.trim() || '',
-      image: img?.src || '',
-      link: anchor?.href || '',
-    };
-  });
-
-  return { config, locations };
 }
 
-/** Build the side-panel HTML for a clicked marker. */
-function buildPanelContent(loc) {
-  const imgTag = loc.image
-    ? `<img class="map-panel-img" src="${loc.image}" alt="${loc.title}">`
+/** Build the popup overlay HTML for a region marker. */
+function buildPopupContent(region) {
+  const statesList = region.states.length
+    ? `<ul class="map-popup-states">${region.states.map((s) => `<li>${s}</li>`).join('')}</ul>`
     : '';
-  const linkTag = loc.link
-    ? `<a class="map-panel-link" href="${loc.link}" target="_blank">\u2192 Learn more</a>`
-    : '';
+
   return `
-    ${imgTag}
-    <h3 class="map-panel-title">${loc.title}</h3>
-    ${loc.category ? `<p class="map-panel-category">${loc.category}</p>` : ''}
-    <div class="map-panel-desc">${loc.description}</div>
-    ${linkTag}
+    <button class="map-popup-close" aria-label="Close">&times;</button>
+    <h3 class="map-popup-region">${region.regionName}</h3>
+    <h4 class="map-popup-country">${region.countryName}</h4>
+    ${statesList}
   `;
 }
 
 /* ── main decorate ─────────────────────────────────────────────── */
 export default async function decorate(block) {
-  const { config, locations } = parseBlock(block);
+  const config = parseBlock(block);
 
   /* clear authored markup, build layout */
   block.textContent = '';
@@ -100,42 +147,45 @@ export default async function decorate(block) {
   const wrapper = document.createElement('div');
   wrapper.className = 'map-wrapper';
 
-  /* Side panel (hidden by default) */
-  const panel = document.createElement('div');
-  panel.className = 'map-panel';
-  panel.innerHTML = '<div class="map-panel-inner"></div>';
-  const panelClose = document.createElement('button');
-  panelClose.className = 'map-panel-close';
-  panelClose.innerHTML = '&times;';
-  panelClose.setAttribute('aria-label', 'Close');
-  panel.prepend(panelClose);
+  /* Popup overlay (hidden by default) */
+  const popup = document.createElement('div');
+  popup.className = 'map-popup';
 
-  /* Map container */
+  /* Map canvas */
   const mapContainer = document.createElement('div');
   mapContainer.className = 'map-canvas';
 
-  wrapper.append(panel, mapContainer);
+  wrapper.append(mapContainer, popup);
   block.append(wrapper);
 
   if (!config.apiKey) {
     mapContainer.textContent = 'Google Maps API key is required.';
     return;
   }
-
-  /* load Google Maps */
-  try {
-    await loadGoogleMaps(config.apiKey);
-  } catch (err) {
-    // eslint-disable-next-line no-console
-    console.error('[Map Block] load error', err);
-    mapContainer.textContent = 'Unable to load Google Maps.';
+  if (!config.aemHost) {
+    mapContainer.textContent = 'AEM Host URL is required for fetching region data.';
     return;
   }
 
-  /* ── create map (default Google Maps look + all controls) ──── */
+  /* Load Google Maps API + region CF data in parallel */
+  let regions = [];
+  try {
+    const [, data] = await Promise.all([
+      loadGoogleMaps(config.apiKey),
+      fetchRegionData(config.aemHost),
+    ]);
+    regions = data;
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('[Map Block] load error', err);
+    mapContainer.textContent = 'Unable to load map data.';
+    return;
+  }
+
+  /* ── create map ──────────────────────────────────────────────── */
   const map = new google.maps.Map(mapContainer, {
-    center: { lat: config.centerLat, lng: config.centerLng },
-    zoom: config.zoom,
+    center: { lat: 20, lng: 0 },
+    zoom: 2,
     maxZoom: 5,
     gestureHandling: 'greedy',
     /* Map / Satellite toggle (top-left) */
@@ -159,7 +209,7 @@ export default async function decorate(block) {
     streetViewControlOptions: {
       position: google.maps.ControlPosition.RIGHT_BOTTOM,
     },
-    /* Camera / compass rotation (bottom-right) */
+    /* Camera / compass (bottom-right) */
     rotateControl: true,
     rotateControlOptions: {
       position: google.maps.ControlPosition.RIGHT_BOTTOM,
@@ -167,7 +217,20 @@ export default async function decorate(block) {
     scaleControl: true,
   });
 
-  /* ── marker icon ────────────────────────────────────────────── */
+  /* ── "Contact Us" custom control (top-right) ─────────────────── */
+  const contactBtn = document.createElement('a');
+  contactBtn.className = 'map-contact-btn';
+  contactBtn.href = '/contact-us';
+  contactBtn.innerHTML = `
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+      <polyline points="22,6 12,13 2,6"/>
+    </svg>
+    Contact Us`;
+  map.controls[google.maps.ControlPosition.TOP_RIGHT].push(contactBtn);
+
+  /* ── marker icon ─────────────────────────────────────────────── */
   const markerIcon = {
     url: MARKER_SVG,
     scaledSize: new google.maps.Size(36, 50),
@@ -175,51 +238,41 @@ export default async function decorate(block) {
   };
 
   const bounds = new google.maps.LatLngBounds();
-  let activeInfoWindow = null;
 
-  /* ── Panel show/hide ────────────────────────────────────────── */
-  const panelInner = panel.querySelector('.map-panel-inner');
-
-  function showPanel(loc) {
-    panelInner.innerHTML = buildPanelContent(loc);
-    panel.classList.add('open');
+  /* ── popup show / hide ───────────────────────────────────────── */
+  function showPopup(region) {
+    popup.innerHTML = buildPopupContent(region);
+    popup.classList.add('open');
+    popup.querySelector('.map-popup-close')?.addEventListener('click', hidePopup);
   }
-  function hidePanel() {
-    panel.classList.remove('open');
+
+  function hidePopup() {
+    popup.classList.remove('open');
   }
-  panelClose.addEventListener('click', hidePanel);
 
-  /* ── place location markers ─────────────────────────────────── */
-  locations.forEach((loc) => {
-    if (!loc.lat || !loc.lng) return;
-
-    const position = { lat: loc.lat, lng: loc.lng };
+  /* ── place markers from Content Fragment data ─────────────── */
+  regions.forEach((region) => {
+    const position = { lat: region.lat, lng: region.lng };
     bounds.extend(position);
 
     const marker = new google.maps.Marker({
       position,
       map,
       icon: markerIcon,
-      title: loc.title,
+      title: `${region.regionName} – ${region.countryName}`,
     });
 
     marker.addListener('click', () => {
-      /* close previous info window */
-      if (activeInfoWindow) activeInfoWindow.close();
-
-      /* center map on marker */
       map.panTo(position);
-
-      /* show side panel */
-      showPanel(loc);
+      showPopup(region);
     });
   });
 
   /* ── fit bounds to show all markers ─────────────────────────── */
-  if (locations.length) {
+  if (regions.length) {
     map.fitBounds(bounds);
   }
 
-  /* close panel when clicking map background */
-  map.addListener('click', hidePanel);
+  /* close popup on map background click */
+  map.addListener('click', hidePopup);
 }

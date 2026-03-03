@@ -1,120 +1,148 @@
-/* ── Map Block ─ matching revmedclinicaltrials.com design ──────── */
+/* ── Map Block ─ region markers + popup overlay ────────────────── */
 
 .map {
-    width: 100%;
-    padding: 0;
+  width: 100%;
+  padding: 0;
 }
 
-/* Wrapper holds the side-panel + canvas */
+/* Wrapper holds the canvas + popup */
 .map .map-wrapper {
-    position: relative;
-    width: 100%;
-    height: 80vh;
-    min-height: 500px;
-    max-height: 900px;
-    overflow: hidden;
-    background: #e8e8e8;
+  position: relative;
+  width: 100%;
+  height: 80vh;
+  min-height: 500px;
+  max-height: 900px;
+  overflow: hidden;
+  background: #e8e8e8;
 }
 
 /* Google Maps canvas */
 .map .map-canvas {
-    width: 100%;
-    height: 100%;
+  width: 100%;
+  height: 100%;
 }
 
-/* ── Side panel (slides in from the left on marker click) ──────── */
-.map .map-panel {
-    position: absolute;
-    top: 0;
+/* ── Popup overlay (appears over the map on marker click) ──────── */
+.map .map-popup {
+  position: absolute;
+  top: 50%;
+  left: 24px;
+  transform: translateY(-50%) translateX(-20px);
+  width: 320px;
+  max-height: 70%;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0 0 0 / 25%);
+  z-index: 10;
+  overflow-y: auto;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease-out, transform 0.25s ease-out;
+  padding: 24px 20px 20px;
+}
+
+.map .map-popup.open {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+  pointer-events: auto;
+}
+
+/* Close button */
+.map .map-popup-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: none;
+  border: none;
+  font-size: 22px;
+  color: #666;
+  cursor: pointer;
+  line-height: 1;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background 0.15s;
+}
+
+.map .map-popup-close:hover {
+  background: #f0f0f0;
+  color: #000;
+}
+
+/* Region name (heading) */
+.map .map-popup-region {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #0e4343;
+  margin: 0 0 4px;
+  padding-right: 24px;
+}
+
+/* Country name */
+.map .map-popup-country {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #234b43;
+  margin: 0 0 12px;
+}
+
+/* States list */
+.map .map-popup-states {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.map .map-popup-states li {
+  background: #e8f5f0;
+  color: #234b43;
+  font-size: 0.8rem;
+  padding: 4px 10px;
+  border-radius: 14px;
+  white-space: nowrap;
+}
+
+/* ── "Contact Us" custom control button ────────────────────────── */
+.map-contact-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #0e4343;
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 6px;
+  text-decoration: none;
+  margin: 10px;
+  box-shadow: 0 2px 6px rgba(0 0 0 / 20%);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.map-contact-btn:hover {
+  background: #234b43;
+}
+
+.map-contact-btn svg {
+  flex-shrink: 0;
+}
+
+/* ── Responsive: stack popup below map on small screens ─────── */
+@media (max-width: 640px) {
+  .map .map-popup {
+    top: auto;
+    bottom: 0;
     left: 0;
-    width: 25%;
-    min-width: 260px;
-    height: 100%;
-    background: #fff;
-    box-shadow: 4px 0 12px rgba(0 0 0 / 15%);
-    z-index: 10;
-    overflow-y: auto;
-    transform: translateX(-100%);
-    opacity: 0;
-    transition: transform 0.25s ease-out, opacity 0.25s ease-out;
-    pointer-events: none;
-}
-
-.map .map-panel.open {
-    transform: translateX(0);
-    opacity: 1;
-    pointer-events: auto;
-}
-
-.map .map-panel-close {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    background: none;
-    border: none;
-    font-size: 24px;
-    color: #0e4343;
-    cursor: pointer;
-    line-height: 1;
-    padding: 4px 8px;
-    z-index: 1;
-}
-
-.map .map-panel-close:hover {
-    color: #000;
-}
-
-.map .map-panel-inner {
-    padding: 32px 20px 20px;
-}
-
-.map .map-panel-img {
     width: 100%;
-    height: auto;
-    border-radius: 4px;
-    margin-bottom: 12px;
-    object-fit: cover;
-}
+    max-height: 50%;
+    border-radius: 16px 16px 0 0;
+    transform: translateY(20px);
+  }
 
-.map .map-panel-title {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: #0e4343;
-    margin: 0 0 8px;
-    text-decoration: underline;
-    text-underline-offset: 3px;
-}
-
-.map .map-panel-category {
-    display: inline-block;
-    background: #234b43;
-    color: #fff;
-    font-size: 0.75rem;
-    padding: 4px 12px;
-    border-radius: 16px;
-    margin-bottom: 12px;
-    text-transform: capitalize;
-}
-
-.map .map-panel-desc {
-    font-size: 0.875rem;
-    line-height: 1.5;
-    color: #333;
-    margin-bottom: 16px;
-}
-
-.map .map-panel-link {
-    display: inline-block;
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: #234b43;
-    text-decoration: underline;
-    text-underline-offset: 3px;
-}
-
-.map .map-panel-link:hover {
-    color: #0e4343;
-}
-
-/* ── Google Maps chrome: keep all native controls visible ──────── */
+  .map .map-popup.open {
+    transform: translateY(0);
+  }
 }
