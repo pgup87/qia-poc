@@ -26,13 +26,6 @@
           "name": "apiKey",
           "label": "Google Maps API Key",
           "description": "Your Google Maps JavaScript API key"
-        },
-        {
-          "component": "text",
-          "valueType": "string",
-          "name": "aemHost",
-          "label": "AEM Host URL",
-          "description": "AEM author or publish host URL for GraphQL queries (e.g. https://publish-p52710-e1559444.adobeaemcloud.com)"
         }
       ]
     }

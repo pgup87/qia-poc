@@ -2,17 +2,36 @@
 
 /**
  * Map Block — Fetches region / country / state data from AEM Content
- * Fragments via a persisted GraphQL query and renders interactive
+ * Fragments via an inline GraphQL POST query and renders interactive
  * markers with popup overlays.
  *
  * Block model fields (xwalk rows):
- *   Row 0 : apiKey      – Google Maps JavaScript API key
- *   Row 1 : aemHost     – AEM publish host for GraphQL
- *                          e.g. https://publish-p52710-e1559444.adobeaemcloud.com
+ *   Row 0 : apiKey – Google Maps JavaScript API key
  *
- * Persisted query path:
- *   /graphql/execute.json/revmed-aem-core/getMapRegions
+ * Content Fragment model: map-model
+ *   fields: regionName (string), countryStateDetails (JSON string)
+ * CF path: /content/dam/clinical-trials/content-fragments/region-data-fragments
+ *
+ * AEM host is derived automatically from the page's origin or fstab.yaml.
  */
+
+/* ── AEM author host (derived from fstab.yaml mountpoint) ──────── */
+const AEM_AUTHOR_HOST = 'https://author-p52710-e1559444.adobeaemcloud.com';
+
+/* ── GraphQL inline query ──────────────────────────────────────── */
+const GQL_QUERY = `{
+  mapModelList(
+    filter: {}
+    offset: 0
+    limit: 50
+  ) {
+    items {
+      _path
+      regionName
+      countryStateDetails
+    }
+  }
+}`;
 
 /* ── Custom marker SVG (white pin + teal diamond logo) ─────────── */
 const MARKER_SVG = `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(
@@ -46,38 +65,30 @@ function loadGoogleMaps(apiKey) {
 }
 
 /**
- * Fetch region data from AEM Content Fragments via persisted GraphQL.
+ * Fetch region data from AEM Content Fragments via inline GraphQL POST.
  *
- * Expected persisted query  : getMapRegions
- * Expected CF model         : map-model  (fields: regionName, countryStateDetails)
+ * Endpoint: {aemHost}/content/cq:graphql/revmed-aem-core/endpoint.json
  *
- * The persisted query should be:
- *   query getMapRegions {
- *     mapModelList {
- *       items {
- *         _path
- *         regionName
- *         countryStateDetails
- *       }
- *     }
- *   }
- *
- * @param {string} aemHost – AEM host URL (author or publish)
  * @returns {Promise<Array>} parsed region objects
  */
-async function fetchRegionData(aemHost) {
-  const host = aemHost.replace(/\/+$/, '');
-  const endpoint = `${host}/graphql/execute.json/revmed-aem-core/getMapRegions`;
+async function fetchRegionData() {
+  const endpoint = `${AEM_AUTHOR_HOST}/content/cq:graphql/revmed-aem-core/endpoint.json`;
 
   const resp = await fetch(endpoint, {
-    method: 'GET',
-    headers: { 'Content-Type': 'application/json' },
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ query: GQL_QUERY }),
   });
 
   if (!resp.ok) throw new Error(`GraphQL request failed: ${resp.status}`);
 
   const json = await resp.json();
   const items = json?.data?.mapModelList?.items || [];
+
+  // eslint-disable-next-line no-console
+  console.log('[Map Block] Fetched CF items:', items.length);
 
   return items.map((item) => {
     let country = {};
@@ -86,7 +97,7 @@ async function fetchRegionData(aemHost) {
       country = parsed.country || parsed;
     } catch (e) {
       // eslint-disable-next-line no-console
-      console.warn('[Map Block] Could not parse countryStateDetails', e);
+      console.warn('[Map Block] Could not parse countryStateDetails for', item.regionName, e);
     }
 
     /* coordinates may be stored as "coordinates" or "cordinates" (legacy typo) */
@@ -105,6 +116,7 @@ async function fetchRegionData(aemHost) {
       lat,
       lng,
       states: country.states || [],
+      path: item._path || '',
     };
   }).filter((r) => r.lat !== 0 && r.lng !== 0);
 }
@@ -112,14 +124,12 @@ async function fetchRegionData(aemHost) {
 /**
  * Parse block rows delivered by xwalk (each model field = one row).
  *   Row 0 : apiKey
- *   Row 1 : aemHost
  */
 function parseBlock(block) {
   const rows = [...block.children];
   const val = (i) => rows[i]?.children?.[0]?.textContent?.trim() || '';
   return {
     apiKey: val(0),
-    aemHost: val(1),
   };
 }
 
@@ -162,17 +172,13 @@ export default async function decorate(block) {
     mapContainer.textContent = 'Google Maps API key is required.';
     return;
   }
-  if (!config.aemHost) {
-    mapContainer.textContent = 'AEM Host URL is required for fetching region data.';
-    return;
-  }
 
   /* Load Google Maps API + region CF data in parallel */
   let regions = [];
   try {
     const [, data] = await Promise.all([
       loadGoogleMaps(config.apiKey),
-      fetchRegionData(config.aemHost),
+      fetchRegionData(),
     ]);
     regions = data;
   } catch (err) {
@@ -182,34 +188,37 @@ export default async function decorate(block) {
     return;
   }
 
-  /* ── create map ──────────────────────────────────────────────── */
+  /* ── compute initial center from CF data ────────────────────── */
+  let centerLat = 0;
+  let centerLng = 0;
+  if (regions.length) {
+    centerLat = regions.reduce((sum, r) => sum + r.lat, 0) / regions.length;
+    centerLng = regions.reduce((sum, r) => sum + r.lng, 0) / regions.length;
+  }
+
+  /* ── create map (center + zoom derived from CF data) ─────────── */
   const map = new google.maps.Map(mapContainer, {
-    center: { lat: 20, lng: 0 },
-    zoom: 2,
+    center: { lat: centerLat, lng: centerLng },
+    zoom: regions.length ? 2 : 1,
     maxZoom: 5,
     gestureHandling: 'greedy',
-    /* Map / Satellite toggle (top-left) */
     mapTypeControl: true,
     mapTypeControlOptions: {
       style: google.maps.MapTypeControlStyle.DEFAULT,
       position: google.maps.ControlPosition.TOP_LEFT,
     },
-    /* Fullscreen button (top-right) */
     fullscreenControl: true,
     fullscreenControlOptions: {
       position: google.maps.ControlPosition.TOP_RIGHT,
     },
-    /* Zoom +/- (bottom-right) */
     zoomControl: true,
     zoomControlOptions: {
       position: google.maps.ControlPosition.RIGHT_BOTTOM,
     },
-    /* Street View pegman (bottom-right) */
     streetViewControl: true,
     streetViewControlOptions: {
       position: google.maps.ControlPosition.RIGHT_BOTTOM,
     },
-    /* Camera / compass (bottom-right) */
     rotateControl: true,
     rotateControlOptions: {
       position: google.maps.ControlPosition.RIGHT_BOTTOM,
