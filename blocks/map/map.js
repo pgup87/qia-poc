@@ -15,23 +15,9 @@
  * AEM host is derived automatically from the page's origin or fstab.yaml.
  */
 
-/* ── AEM publish host ──────────────────────────────────────────── */
-const AEM_PUBLISH_HOST = 'https://publish-p52710-e1559444.adobeaemcloud.com';
-
-/* ── GraphQL inline query ──────────────────────────────────────── */
-const GQL_QUERY = `{
-  mapModelList(
-    filter: {}
-    offset: 0
-    limit: 50
-  ) {
-    items {
-      _path
-      regionName
-      countryStateDetails
-    }
-  }
-}`;
+/* ── AEM publish host & GraphQL path ───────────────────────────── */
+const ORIGIN = 'https://publish-p178131-e1882764.adobeaemcloud.com';
+const GRAPHQL_PATH = '/graphql/execute.json/piyush-unbranded-revmed-site';
 /* ── Custom marker SVG (white pin + teal diamond logo) ─────────── */
 const MARKER_SVG = `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(
   `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 56" width="40" height="56">
@@ -64,21 +50,32 @@ function loadGoogleMaps(apiKey) {
 }
 
 /**
- * Fetch region data from AEM Content Fragments via inline GraphQL POST.
+ * Fetch region data from AEM Content Fragments via persisted GraphQL query.
  *
- * Endpoint: {aemHost}/content/cq:graphql/revmed-aem-core/endpoint.json
+ * Persisted query: getMapRegions
+ * Endpoint: {ORIGIN}{GRAPHQL_PATH}/getMapRegions
+ *
+ * You must create this persisted query in AEM GraphQL IDE:
+ *   query getMapRegions {
+ *     mapModelList {
+ *       items {
+ *         _path
+ *         regionName
+ *         countryStateDetails
+ *       }
+ *     }
+ *   }
  *
  * @returns {Promise<Array>} parsed region objects
  */
 async function fetchRegionData() {
-  const endpoint = `${AEM_PUBLISH_HOST}/content/cq:graphql/piyush-unbranded-revmed-site/endpoint.json`;
+  const endpoint = `${ORIGIN}${GRAPHQL_PATH}/getMapRegions`;
 
   const resp = await fetch(endpoint, {
-    method: 'POST',
+    method: 'GET',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ query: GQL_QUERY }),
   });
 
   if (!resp.ok) throw new Error(`GraphQL request failed: ${resp.status}`);
