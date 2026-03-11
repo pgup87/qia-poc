@@ -1,24 +1,24 @@
 /* eslint-disable no-undef */
 
 /**
- * Map Block — Fetches region / country / state data from AEM Content
- * Fragments via an inline GraphQL POST query and renders interactive
- * markers with popup overlays.
+ * Map Block
  *
- * Block model fields (xwalk rows):
- *   Row 0 : apiKey – Google Maps JavaScript API key
+ * Renders an interactive Google Map with markers driven by AEM Content
+ * Fragments. Region / country data is fetched from a persisted GraphQL
+ * query; clicking a marker opens a popup overlay with region details.
  *
- * Content Fragment model: map-model
- *   fields: regionName (string), countryStateDetails (Json — auto-parsed)
- * CF path: /content/dam/clinical-trials/content-fragments/region-data-fragments
+ * Authorable fields (Universal Editor / xwalk):
+ *   apiKey – Google Maps JavaScript API key (entered by the author,
+ *            never hard-coded in source)
  *
- * Endpoint: publish-p178131-e1882764 / revmed-aem-core / getRegionCountryData
+ * GraphQL endpoint (persisted query):
+ *   GET {ORIGIN}{GRAPHQL_PATH}/getRegionCountryData
  */
 
-/* ── AEM publish host & GraphQL path ───────────────────────────── */
 const ORIGIN = 'https://publish-p178131-e1882764.adobeaemcloud.com';
 const GRAPHQL_PATH = '/graphql/execute.json/revmed-aem-core';
-/* ── Custom marker SVG (white pin + teal diamond logo) ─────────── */
+
+/** Inline SVG data-URI used for every map marker. */
 const MARKER_SVG = `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(
   `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 56" width="40" height="56">
     <defs>
@@ -33,9 +33,14 @@ const MARKER_SVG = `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(
   </svg>`,
 )}`;
 
-/* ── helpers ────────────────────────────────────────────────────── */
+/* ------------------------------------------------------------------ */
+/*  Helpers                                                           */
+/* ------------------------------------------------------------------ */
 
-/** Dynamically load the Google Maps JavaScript API. */
+/**
+ * Load the Google Maps JavaScript API once.
+ * @param {string} apiKey - author-provided API key
+ */
 function loadGoogleMaps(apiKey) {
   return new Promise((resolve, reject) => {
     if (window.google?.maps) { resolve(); return; }
@@ -52,145 +57,119 @@ function loadGoogleMaps(apiKey) {
 /**
  * Fetch region data from AEM Content Fragments via persisted GraphQL query.
  *
- * Persisted query: getRegionCountryData
- * Endpoint: {ORIGIN}{GRAPHQL_PATH}/getRegionCountryData
+ * Each CF item contains a `countries` array inside `countryStateDetails`.
+ * We flatten the structure so every country with valid coordinates becomes
+ * its own marker object.
  *
- * Each region has a `countries` array — we flatten into one marker per
- * country (skipping entries with empty or missing coordinates).
- *
- * @returns {Promise<Array>} flat list of marker objects
+ * @returns {Promise<Array<{regionName:string, countryName:string,
+ *   lat:number, lng:number, states:string[], path:string}>>}
  */
 async function fetchRegionData() {
   const endpoint = `${ORIGIN}${GRAPHQL_PATH}/getRegionCountryData`;
-
-  const resp = await fetch(endpoint, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
+  const resp = await fetch(endpoint);
 
   if (!resp.ok) throw new Error(`GraphQL request failed: ${resp.status}`);
 
-  const json = await resp.json();
-  const items = json?.data?.mapModelList?.items || [];
-
-  // eslint-disable-next-line no-console
-  console.log('[Map Block] Fetched CF items (regions):', items.length);
-
-  /* Flatten: one entry per country that has valid coordinates */
+  const { data } = await resp.json();
+  const items = data?.mapModelList?.items ?? [];
   const markers = [];
 
   items.forEach((item) => {
-    const regionName = item.regionName || '';
-    const details = item.countryStateDetails || {};
-    const countries = details.countries || [];
+    const regionName = item.regionName ?? '';
+    const countries = item.countryStateDetails?.countries ?? [];
 
     countries.forEach((country) => {
-      /* coordinates may be stored as "coordinates" or "cordinates" (legacy typo) */
       const coords = country.coordinates || country.cordinates || '';
-      if (!coords || typeof coords !== 'string') return;
+      if (!coords) return;
 
-      const parts = coords.split(',').map((v) => v.trim());
-      const lat = parseFloat(parts[0]) || 0;
-      const lng = parseFloat(parts[1]) || 0;
-      if (lat === 0 && lng === 0) return;
+      const [rawLat, rawLng] = coords.split(',').map((v) => v.trim());
+      const lat = parseFloat(rawLat) || 0;
+      const lng = parseFloat(rawLng) || 0;
+      if (!lat && !lng) return;
 
       markers.push({
         regionName,
-        countryName: country.name || '',
+        countryName: country.name ?? '',
         lat,
         lng,
-        states: country.states || [],
-        path: item._path || '',
+        states: country.states ?? [],
+        path: item._path ?? '',
       });
     });
   });
 
-  // eslint-disable-next-line no-console
-  console.log('[Map Block] Total markers (countries with coords):', markers.length);
   return markers;
 }
 
 /**
- * Parse block rows delivered by xwalk (each model field = one row).
- *   Row 0 : apiKey
+ * Read the single authorable field from an xwalk block.
+ * Row 0 = apiKey (Google Maps JavaScript API key).
  */
 function parseBlock(block) {
   const rows = [...block.children];
-  const val = (i) => rows[i]?.children?.[0]?.textContent?.trim() || '';
-  return {
-    apiKey: val(0),
-  };
+  return { apiKey: rows[0]?.children?.[0]?.textContent?.trim() ?? '' };
 }
 
-/** Build the popup overlay HTML for a region marker. */
-function buildPopupContent(region) {
-  const statesList = region.states.length
-    ? `<ul class="map-popup-states">${region.states.map((s) => `<li>${s}</li>`).join('')}</ul>`
+/** Generate popup HTML for a marker. */
+function buildPopupContent({ regionName, countryName, states }) {
+  const pills = states.length
+    ? `<ul class="map-popup-states">${states.map((s) => `<li>${s}</li>`).join('')}</ul>`
     : '';
-
   return `
     <button class="map-popup-close" aria-label="Close">&times;</button>
-    <h3 class="map-popup-region">${region.regionName}</h3>
-    <h4 class="map-popup-country">${region.countryName}</h4>
-    ${statesList}
-  `;
+    <h3 class="map-popup-region">${regionName}</h3>
+    <h4 class="map-popup-country">${countryName}</h4>
+    ${pills}`;
 }
 
-/* ── main decorate ─────────────────────────────────────────────── */
-export default async function decorate(block) {
-  const config = parseBlock(block);
+/* ------------------------------------------------------------------ */
+/*  Block entry point                                                 */
+/* ------------------------------------------------------------------ */
 
-  /* clear authored markup, build layout */
+export default async function decorate(block) {
+  const { apiKey } = parseBlock(block);
+
+  /* Replace authored markup with map layout */
   block.textContent = '';
 
   const wrapper = document.createElement('div');
   wrapper.className = 'map-wrapper';
 
-  /* Popup overlay (hidden by default) */
   const popup = document.createElement('div');
   popup.className = 'map-popup';
 
-  /* Map canvas */
-  const mapContainer = document.createElement('div');
-  mapContainer.className = 'map-canvas';
+  const mapCanvas = document.createElement('div');
+  mapCanvas.className = 'map-canvas';
 
-  wrapper.append(mapContainer, popup);
+  wrapper.append(mapCanvas, popup);
   block.append(wrapper);
 
-  if (!config.apiKey) {
-    mapContainer.textContent = 'Google Maps API key is required.';
+  if (!apiKey) {
+    mapCanvas.textContent = 'Google Maps API key is required.';
     return;
   }
 
-  /* Load Google Maps API + region CF data in parallel */
-  let regions = [];
+  /* Load API & data in parallel */
+  let markers = [];
   try {
-    const [, data] = await Promise.all([
-      loadGoogleMaps(config.apiKey),
-      fetchRegionData(),
-    ]);
-    regions = data;
+    [, markers] = await Promise.all([loadGoogleMaps(apiKey), fetchRegionData()]);
   } catch (err) {
     // eslint-disable-next-line no-console
-    console.error('[Map Block] load error', err);
-    mapContainer.textContent = 'Unable to load map data.';
+    console.error('[Map Block]', err);
+    mapCanvas.textContent = 'Unable to load map data.';
     return;
   }
 
-  /* ── compute initial center from CF data ────────────────────── */
-  let centerLat = 0;
-  let centerLng = 0;
-  if (regions.length) {
-    centerLat = regions.reduce((sum, r) => sum + r.lat, 0) / regions.length;
-    centerLng = regions.reduce((sum, r) => sum + r.lng, 0) / regions.length;
-  }
+  /* Compute center from data */
+  const centerLat = markers.length
+    ? markers.reduce((s, m) => s + m.lat, 0) / markers.length : 0;
+  const centerLng = markers.length
+    ? markers.reduce((s, m) => s + m.lng, 0) / markers.length : 0;
 
-  /* ── create map (center + zoom derived from CF data) ─────────── */
-  const map = new google.maps.Map(mapContainer, {
+  /* Create map */
+  const map = new google.maps.Map(mapCanvas, {
     center: { lat: centerLat, lng: centerLng },
-    zoom: regions.length ? 2 : 1,
+    zoom: markers.length ? 2 : 1,
     maxZoom: 5,
     gestureHandling: 'greedy',
     mapTypeControl: true,
@@ -199,25 +178,17 @@ export default async function decorate(block) {
       position: google.maps.ControlPosition.TOP_LEFT,
     },
     fullscreenControl: true,
-    fullscreenControlOptions: {
-      position: google.maps.ControlPosition.TOP_RIGHT,
-    },
+    fullscreenControlOptions: { position: google.maps.ControlPosition.TOP_RIGHT },
     zoomControl: true,
-    zoomControlOptions: {
-      position: google.maps.ControlPosition.RIGHT_BOTTOM,
-    },
+    zoomControlOptions: { position: google.maps.ControlPosition.RIGHT_BOTTOM },
     streetViewControl: true,
-    streetViewControlOptions: {
-      position: google.maps.ControlPosition.RIGHT_BOTTOM,
-    },
+    streetViewControlOptions: { position: google.maps.ControlPosition.RIGHT_BOTTOM },
     rotateControl: true,
-    rotateControlOptions: {
-      position: google.maps.ControlPosition.RIGHT_BOTTOM,
-    },
+    rotateControlOptions: { position: google.maps.ControlPosition.RIGHT_BOTTOM },
     scaleControl: true,
   });
 
-  /* ── "Contact Us" custom control (top-right) ─────────────────── */
+  /* "Contact Us" button */
   const contactBtn = document.createElement('a');
   contactBtn.className = 'map-contact-btn';
   contactBtn.href = '/contact-us';
@@ -230,28 +201,25 @@ export default async function decorate(block) {
     Contact Us`;
   map.controls[google.maps.ControlPosition.TOP_RIGHT].push(contactBtn);
 
-  /* ── marker icon ─────────────────────────────────────────────── */
+  /* Marker icon */
   const markerIcon = {
     url: MARKER_SVG,
     scaledSize: new google.maps.Size(36, 50),
     anchor: new google.maps.Point(18, 50),
   };
 
-  const bounds = new google.maps.LatLngBounds();
-
-  /* ── popup show / hide ───────────────────────────────────────── */
-  function showPopup(region) {
+  /* Popup helpers */
+  const hidePopup = () => popup.classList.remove('open');
+  const showPopup = (region) => {
     popup.innerHTML = buildPopupContent(region);
     popup.classList.add('open');
     popup.querySelector('.map-popup-close')?.addEventListener('click', hidePopup);
-  }
+  };
 
-  function hidePopup() {
-    popup.classList.remove('open');
-  }
+  /* Place markers */
+  const bounds = new google.maps.LatLngBounds();
 
-  /* ── place markers from Content Fragment data ─────────────── */
-  regions.forEach((region) => {
+  markers.forEach((region) => {
     const position = { lat: region.lat, lng: region.lng };
     bounds.extend(position);
 
@@ -268,11 +236,8 @@ export default async function decorate(block) {
     });
   });
 
-  /* ── fit bounds to show all markers ─────────────────────────── */
-  if (regions.length) {
-    map.fitBounds(bounds);
-  }
+  if (markers.length) map.fitBounds(bounds);
 
-  /* close popup on map background click */
+  /* Close popup on background click */
   map.addListener('click', hidePopup);
 }
