@@ -9,15 +9,15 @@
  *   Row 0 : apiKey – Google Maps JavaScript API key
  *
  * Content Fragment model: map-model
- *   fields: regionName (string), countryStateDetails (JSON string)
+ *   fields: regionName (string), countryStateDetails (Json — auto-parsed)
  * CF path: /content/dam/clinical-trials/content-fragments/region-data-fragments
  *
- * AEM host is derived automatically from the page's origin or fstab.yaml.
+ * Endpoint: publish-p178131-e1882764 / revmed-aem-core / getRegionCountryData
  */
 
 /* ── AEM publish host & GraphQL path ───────────────────────────── */
-const ORIGIN = 'https://publish-p52710-e1559444.adobeaemcloud.com';
-const GRAPHQL_PATH = '/graphql/execute.json/piyush-unbranded-revmed-site';
+const ORIGIN = 'https://publish-p178131-e1882764.adobeaemcloud.com';
+const GRAPHQL_PATH = '/graphql/execute.json/revmed-aem-core';
 /* ── Custom marker SVG (white pin + teal diamond logo) ─────────── */
 const MARKER_SVG = `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(
   `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 56" width="40" height="56">
@@ -52,24 +52,16 @@ function loadGoogleMaps(apiKey) {
 /**
  * Fetch region data from AEM Content Fragments via persisted GraphQL query.
  *
- * Persisted query: getMapRegions
- * Endpoint: {ORIGIN}{GRAPHQL_PATH}/getMapRegions
+ * Persisted query: getRegionCountryData
+ * Endpoint: {ORIGIN}{GRAPHQL_PATH}/getRegionCountryData
  *
- * You must create this persisted query in AEM GraphQL IDE:
- *   query getMapRegions {
- *     mapModelList {
- *       items {
- *         _path
- *         regionName
- *         countryStateDetails
- *       }
- *     }
- *   }
+ * Each region has a `countries` array — we flatten into one marker per
+ * country (skipping entries with empty or missing coordinates).
  *
- * @returns {Promise<Array>} parsed region objects
+ * @returns {Promise<Array>} flat list of marker objects
  */
 async function fetchRegionData() {
-  const endpoint = `${ORIGIN}${GRAPHQL_PATH}/getMapRegions`;
+  const endpoint = `${ORIGIN}${GRAPHQL_PATH}/getRegionCountryData`;
 
   const resp = await fetch(endpoint, {
     method: 'GET',
@@ -84,37 +76,40 @@ async function fetchRegionData() {
   const items = json?.data?.mapModelList?.items || [];
 
   // eslint-disable-next-line no-console
-  console.log('[Map Block] Fetched CF items:', items.length);
+  console.log('[Map Block] Fetched CF items (regions):', items.length);
 
-  return items.map((item) => {
-    let country = {};
-    try {
-      const parsed = JSON.parse(item.countryStateDetails);
-      country = parsed.country || parsed;
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.warn('[Map Block] Could not parse countryStateDetails for', item.regionName, e);
-    }
+  /* Flatten: one entry per country that has valid coordinates */
+  const markers = [];
 
-    /* coordinates may be stored as "coordinates" or "cordinates" (legacy typo) */
-    const coords = country.coordinates || country.cordinates || '';
-    let lat = 0;
-    let lng = 0;
-    if (coords) {
+  items.forEach((item) => {
+    const regionName = item.regionName || '';
+    const details = item.countryStateDetails || {};
+    const countries = details.countries || [];
+
+    countries.forEach((country) => {
+      /* coordinates may be stored as "coordinates" or "cordinates" (legacy typo) */
+      const coords = country.coordinates || country.cordinates || '';
+      if (!coords || typeof coords !== 'string') return;
+
       const parts = coords.split(',').map((v) => v.trim());
-      lat = parseFloat(parts[0]) || 0;
-      lng = parseFloat(parts[1]) || 0;
-    }
+      const lat = parseFloat(parts[0]) || 0;
+      const lng = parseFloat(parts[1]) || 0;
+      if (lat === 0 && lng === 0) return;
 
-    return {
-      regionName: item.regionName || '',
-      countryName: country.name || '',
-      lat,
-      lng,
-      states: country.states || [],
-      path: item._path || '',
-    };
-  }).filter((r) => r.lat !== 0 && r.lng !== 0);
+      markers.push({
+        regionName,
+        countryName: country.name || '',
+        lat,
+        lng,
+        states: country.states || [],
+        path: item._path || '',
+      });
+    });
+  });
+
+  // eslint-disable-next-line no-console
+  console.log('[Map Block] Total markers (countries with coords):', markers.length);
+  return markers;
 }
 
 /**
